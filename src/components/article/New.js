@@ -1,22 +1,34 @@
 import React from 'react';
-import { Link }  from 'react-router-dom'
+import { Link ,Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
 
 class ArticleNew extends React.Component{
-    state = { title : null, price: null };
+    state = { redirect: null,
+              article : {title : null, price: null, category_id: null},
+              categories : [] };
 
-     
+    componentDidMount(){
+        api.get('/categories')
+            .then(res => {
+                console.log(res.data);
+                let categories = res.data;
+                this.setState({categories});
+        })  
+    }
      
     onFormSubmit = (event) => {
         event.preventDefault();
-        api.post('/articles',{title: this.state.title, price: parseFloat(this.state.price)})
+        api.post('/articles',this.state.article)
             .then(res => {
                 console.log(res);
+                this.setState({redirect: true});
         })  
     }
 
     render(){
+        if(this.state.redirect)
+            return <Redirect to="/articles" />
         return (
             <div>
                  <Nav />
@@ -31,18 +43,40 @@ class ArticleNew extends React.Component{
                         <form onSubmit={this.onFormSubmit}>
                             <div className="form-group">
                                 <label>Titre</label>
-                                <input type="text" onChange={(event)=>{this.setState({title: event.target.value})}} className="form-control" />
+                                <input type="text" onChange={(event)=>{
+                                    let article = this.state.article;
+                                    article.title= event.target.value;
+                                    this.setState({article});
+                                    }} className="form-control" />
                             </div>
                             <div className="form-group">
                                 <label>Prix</label>
-                                <input type="text" onChange={(event)=>{this.setState({price: event.target.value})}} className="form-control" />
+                                <input type="text" onChange={(event)=>{
+                                    let article = this.state.article;
+                                    article.price = event.target.value;
+                                    this.setState({article});
+                                    }} className="form-control" />
+                            </div>
+                            <div className="form-group">
+                                <label>Catégorie</label>
+                                <select onChange={(event)=>{
+                                    let article = this.state.article;
+                                    article.category_id= event.target.value;
+                                    this.setState({article});
+                                    }} className="form-control">
+                                    {this.state.categories.map( category => {
+                                        return <option key={category.id} value={category.id}>{category.title}</option>
+                                    })}
+                                </select>
                             </div>
                             <button className="btn btn-primary">Ajouter</button>
                         </form>
                          
                     </div>
                 </div>
+                {this.state.redirect}
             </div>
+           
           );
     }
 }

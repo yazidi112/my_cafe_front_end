@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Link }  from 'react-router-dom'
 import ArticleListe from './article/Liste'
 import ArticleNew from './article/New'
 import ArticleEdit from './article/Edit'
-import Category from './Category'
+import CategoryListe from './category/Liste'
+import CategoryNew from './category/New'
 import Login from './Login'
  
 
@@ -16,7 +17,8 @@ class Home extends React.Component{
         else
             return (
                 <BrowserRouter>
-                    <Route path="/categories" exact component ={Category} />
+                    <Route path="/categories" exact component ={CategoryListe} />
+                    <Route path="/categories/new" exact component ={CategoryNew} />
                     <Route path="/articles" exact component ={ArticleListe} />
                     <Route path="/articles/new" exact component ={ArticleNew} />
                     <Route path="/articles/edit/:id" exact component ={ArticleEdit} />

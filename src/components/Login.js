@@ -30,7 +30,6 @@ class Login extends React.Component{
                 this.setState({ token: token });
                 console.log(res);
                 localStorage.setItem('token',this.state.token);
-                return <Redirect to="/articles" />
         },
             err => {
                 const message = err.message;
@@ -39,9 +38,12 @@ class Login extends React.Component{
     }
      
     render(){
+        if(localStorage.getItem('token'))
+            return <Redirect to="/articles" />
+        else
         return (
              <div className="container">
-                <div className="card m-3 w-50">
+                <div className="card m-3">
                     <div className="card-header  bg-primary text-white">
                         <h3> Connexion</h3>
                     </div>

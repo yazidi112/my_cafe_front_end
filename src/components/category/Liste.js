@@ -3,33 +3,33 @@ import { Link }  from 'react-router-dom';
 import api from '../../apis/api';
 import Nav from '../Nav';
 
-class Article extends React.Component{
+class categorie extends React.Component{
     state = { 
-        articles : [],
+        categories : [],
         artcileNewData: {title:'', price: ''},
-        articleEditData: {id:'', title:'', price: ''},
+        categorieEditData: {id:'', title:'', price: ''},
         modalEditDisplay: ''
     };
 
-    articlesRefresh(){
-        api.get('/articles')
+    categoriesRefresh(){
+        api.get('/categories')
             .then(res => {
-                const articles = res.data;
-                this.setState({ articles }); 
+                const categories = res.data;
+                this.setState({ categories }); 
         }) 
     }
 
     componentDidMount(){
-        this.articlesRefresh();
+        this.categoriesRefresh();
     }
      
     onDelete = (id) => {
         if(!window.confirm("Etes-vous sûr de vouloir supprimer ?"))
             return false;
 
-        api.delete(`/articles/${id}`).then(res => {
+        api.delete(`/categories/${id}`).then(res => {
             console.log(res);
-            this.articlesRefresh();
+            this.categoriesRefresh();
         })  
     }
 
@@ -42,11 +42,11 @@ class Article extends React.Component{
             <div>
                 <Nav />
                 <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/articles/new" >Ajouter un article</Link>
+                    <Link className="btn btn-info pull-right" to="/categories/new" >Ajouter un categorie</Link>
                 </div>
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Liste des articles</h3>
+                        <h3 className="card-title">Liste des categories</h3>
                     </div>
                     <div className="card-body">
                     <table className="table table-bordered table-striped">
@@ -54,19 +54,17 @@ class Article extends React.Component{
                             <tr>
                                 <th>ID</th>
                                 <th>Titre</th>
-                                <th>Prix</th>
                                 <th style={{width : 200}}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            { this.state.articles.map(article => 
-                                <tr key={article.id}>
-                                    <td>{article.id}</td>
-                                    <td>{article.title}</td>
-                                    <td>{article.price}</td>
+                            { this.state.categories.map(categorie => 
+                                <tr key={categorie.id}>
+                                    <td>{categorie.id}</td>
+                                    <td>{categorie.title}</td>
                                     <td>
-                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,article.id)}>Supprimer</a>  
-                                        <Link className="btn btn-sm btn-success" to={`/articles/edit/${article.id}`} >Modifier</Link> 
+                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  
+                                        <Link className="btn btn-sm btn-success" to={`/categories/edit/${categorie.id}`} >Modifier</Link> 
                                     </td>
                                 </tr>
                                 )}
@@ -80,4 +78,4 @@ class Article extends React.Component{
     }
 }
 
-export default Article;  
+export default categorie;  
