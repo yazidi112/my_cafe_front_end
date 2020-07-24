@@ -5,7 +5,7 @@ import Nav from '../Nav';
 
 class ArticleNew extends React.Component{
     state = { redirect: null,
-              article : {title : null, price: null, category_id: null},
+              article : {title : null, price: null, category: null},
               categories : [] };
 
     componentDidMount(){
@@ -21,7 +21,6 @@ class ArticleNew extends React.Component{
         event.preventDefault();
         api.post('/articles',this.state.article)
             .then(res => {
-                console.log(res);
                 this.setState({redirect: true});
         })  
     }
@@ -53,7 +52,7 @@ class ArticleNew extends React.Component{
                                 <label>Prix</label>
                                 <input type="text" onChange={(event)=>{
                                     let article = this.state.article;
-                                    article.price = event.target.value;
+                                    article.price = parseFloat(event.target.value);
                                     this.setState({article});
                                     }} className="form-control" />
                             </div>
@@ -61,8 +60,9 @@ class ArticleNew extends React.Component{
                                 <label>Catégorie</label>
                                 <select onChange={(event)=>{
                                     let article = this.state.article;
-                                    article.category_id= event.target.value;
+                                    article.category = "/api/categories/"+event.target.value;
                                     this.setState({article});
+                                    console.log(event.target.value);
                                     }} className="form-control">
                                     {this.state.categories.map( category => {
                                         return <option key={category.id} value={category.id}>{category.title}</option>
@@ -71,7 +71,7 @@ class ArticleNew extends React.Component{
                             </div>
                             <button className="btn btn-primary">Ajouter</button>
                         </form>
-                         
+                         {this.state.article.category}
                     </div>
                 </div>
                 {this.state.redirect}

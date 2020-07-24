@@ -38,9 +38,7 @@ class Login extends React.Component{
     }
      
     render(){
-        if(localStorage.getItem('token'))
-            return <Redirect to="/articles" />
-        else
+         
         return (
              <div className="container">
                 <div className="card m-3">

@@ -6,6 +6,7 @@ import ArticleNew from './article/New'
 import ArticleEdit from './article/Edit'
 import CategoryListe from './category/Liste'
 import CategoryNew from './category/New'
+import CommandeNew from './commande/New'
 import Login from './Login'
  
 
@@ -17,6 +18,7 @@ class Home extends React.Component{
         else
             return (
                 <BrowserRouter>
+                    <Route path="/commande/new" exact component ={CommandeNew} />
                     <Route path="/categories" exact component ={CategoryListe} />
                     <Route path="/categories/new" exact component ={CategoryNew} />
                     <Route path="/articles" exact component ={ArticleListe} />
