@@ -1,10 +1,9 @@
 import React from 'react';
-import axios from 'axios';
 import {Redirect} from 'react-router-dom';
-  
+import api from '../apis/api';
 
 class Login extends React.Component{
-    state = { token : '', email : '',password: '' , message: ''};
+    state = { token : '', email : '',password: '' , message: '', logged: false};
 
      
     onEmailChange = (event) => {
@@ -17,19 +16,16 @@ class Login extends React.Component{
 
     onLogin = (event) => {
         event.preventDefault();
-        axios.post('http://127.0.0.1:8000/api/login_check',
-            {"username":this.state.email,"password": this.state.password },
-            {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        }).then(
-            res => {
+        let message = "Connexion en cours..";
+        this.setState({ message }); 
+        api.post('login_check',{"username":this.state.email,"password": this.state.password }).then(
+        res => {
                 const token = res.data.token;
                 this.setState({ token: token });
                 console.log(res);
                 localStorage.setItem('token',this.state.token);
+                message = this.state.token;
+                this.setState({ message, logged: true }); 
         },
             err => {
                 const message = err.message;
@@ -38,12 +34,13 @@ class Login extends React.Component{
     }
      
     render(){
-         
+        if(this.state.logged) 
+            return <Redirect to="/commande/new" />
         return (
              <div className="container">
                 <div className="card m-3">
                     <div className="card-header  bg-primary text-white">
-                        <h3> Connexion</h3>
+                        <h3> My <i>Café</i> 2020 <small>Authentification</small></h3>
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onLogin}>
@@ -58,7 +55,10 @@ class Login extends React.Component{
                             </div>
                             <button className="btn btn-primary">Connexion</button>
                         </form>
-                        {this.state.message} 
+                        <div class="alert">
+                            {this.state.message} 
+                        </div>
+                        
                     </div>
                 </div>
             </div>
