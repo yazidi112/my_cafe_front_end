@@ -6,8 +6,14 @@ import ArticleNew from './article/New'
 import ArticleEdit from './article/Edit'
 import CategoryListe from './category/Liste'
 import CategoryNew from './category/New'
+import CategoryEdit from './category/Edit'
 import CommandeNew from './commande/New'
+import CommandeListe from './commande/Liste'
+import UserListe from './users/Liste'
+import UserNew from './users/New'
+import UserEdit from './users/Edit'
 import Login from './Login'
+import Logout from './Logout'
  
 
 class Home extends React.Component{
@@ -18,13 +24,20 @@ class Home extends React.Component{
         else
             return (
                 <BrowserRouter>
+                    <Route path="/" exact component ={CommandeNew} />
                     <Route path="/commande/new" exact component ={CommandeNew} />
+                    <Route path="/commandes" exact component ={CommandeListe} />
                     <Route path="/categories" exact component ={CategoryListe} />
                     <Route path="/categories/new" exact component ={CategoryNew} />
+                    <Route path="/categories/edit/:id" exact component ={CategoryEdit} />
                     <Route path="/articles" exact component ={ArticleListe} />
                     <Route path="/articles/new" exact component ={ArticleNew} />
                     <Route path="/articles/edit/:id" exact component ={ArticleEdit} />
+                    <Route path="/users" exact component ={UserListe} />
+                    <Route path="/users/new" exact component ={UserNew} />
+                    <Route path="/users/edit/:id" exact component ={UserEdit} />
                     <Route path="/login" exact component ={Login} />
+                    <Route path="/logout" exact component ={Logout} />
                 </BrowserRouter>
             )
     }

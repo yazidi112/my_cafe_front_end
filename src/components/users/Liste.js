@@ -3,33 +3,32 @@ import { Link }  from 'react-router-dom';
 import api from '../../apis/api';
 import Nav from '../Nav';
 
-class categorie extends React.Component{
+class user extends React.Component{
     state = { 
-        categories : [],
-        artcileNewData: {title:'', price: ''},
-        categorieEditData: {id:'', title:'', price: ''},
-        modalEditDisplay: ''
+        users : [],
+        userNewData: {title:'', price: ''},
+        userEditData: {id:'', title:'', price: ''}
     };
 
-    categoriesRefresh(){
-        api.get('/categories')
+    usersRefresh(){
+        api.get('/users')
             .then(res => {
-                const categories = res.data;
-                this.setState({ categories }); 
+                const users = res.data;
+                this.setState({ users }); 
         }) 
     }
 
     componentDidMount(){
-        this.categoriesRefresh();
+        this.usersRefresh();
     }
      
     onDelete = (id) => {
         if(!window.confirm("Etes-vous sûr de vouloir supprimer ?"))
             return false;
 
-        api.delete(`/categories/${id}`).then(res => {
+        api.delete(`/users/${id}`).then(res => {
             console.log(res);
-            this.categoriesRefresh();
+            this.usersRefresh();
         })  
     }
 
@@ -42,40 +41,40 @@ class categorie extends React.Component{
             <div>
                 <Nav />
                 <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/categories/new" >Ajouter une Catégorie</Link>
+                    <Link className="btn btn-info pull-right" to="/users/new" >Ajouter un utilisateur</Link>
                 </div>
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Liste des categories</h3>
+                        <h3 className="card-title">Liste des utilisateurs</h3>
                     </div>
                     <div className="card-body">
                     <table className="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Titre</th>
+                                <th>Email</th>
                                 <th style={{width : 200}}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            { this.state.categories.map(categorie => 
-                                <tr key={categorie.id}>
-                                    <td>{categorie.id}</td>
-                                    <td>{categorie.title}</td>
+                            { this.state.users.map(user => 
+                                <tr key={user.id}>
+                                    <td>{user.id}</td>
+                                    <td>{user.email}</td>
                                     <td>
-                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  
-                                        <Link className="btn btn-sm btn-success" to={`/categories/edit/${categorie.id}`} >Modifier</Link> 
+                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,user.id)}>Supprimer</a>  
+                                        <Link className="btn btn-sm btn-success" to={`/users/edit/${user.id}`} >Modifier</Link> 
                                     </td>
                                 </tr>
                                 )}
                         </tbody>
                     </table>
-                    </div>
                 </div>
             </div>
+        </div>
             
           );
     }
 }
 
-export default categorie;  
+export default user;  

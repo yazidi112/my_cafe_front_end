@@ -1,75 +1,106 @@
 import React from 'react';
-import { Link }  from 'react-router-dom';
 import api from '../../apis/api';
 import Nav from '../Nav';
 
-class categorie extends React.Component{
+class commande extends React.Component{
     state = { 
-        categories : [],
-        artcileNewData: {title:'', price: ''},
-        categorieEditData: {id:'', title:'', price: ''},
-        modalEditDisplay: ''
+        commandes : [],
+        commande : []
     };
 
-    categoriesRefresh(){
-        api.get('/categories')
+    commandesRefresh(){
+        api.get('/commandes')
             .then(res => {
-                const categories = res.data;
-                this.setState({ categories }); 
+                const commandes = res.data;
+                this.setState({ commandes }); 
         }) 
     }
 
     componentDidMount(){
-        this.categoriesRefresh();
+        this.commandesRefresh();
     }
      
-    onDelete = (id) => {
-        if(!window.confirm("Etes-vous sûr de vouloir supprimer ?"))
-            return false;
-
-        api.delete(`/categories/${id}`).then(res => {
-            console.log(res);
-            this.categoriesRefresh();
-        })  
+    onCommandeSelect(id){
+        api.get('/lignecommandes?commande='+id)
+            .then(res => {
+                const commande = res.data;
+                this.setState({ commande }); 
+        }) 
     }
-
-     
-
      
 
     render(){
         return (
             <div>
                 <Nav />
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/categories/new" >Ajouter un categorie</Link>
-                </div>
+                
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Liste des categories</h3>
+                        <h3 className="card-title">Liste des commandes</h3>
                     </div>
                     <div className="card-body">
-                    <table className="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Titre</th>
-                                <th style={{width : 200}}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { this.state.categories.map(categorie => 
-                                <tr key={categorie.id}>
-                                    <td>{categorie.id}</td>
-                                    <td>{categorie.title}</td>
-                                    <td>
-                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  
-                                        <Link className="btn btn-sm btn-success" to={`/categories/edit/${categorie.id}`} >Modifier</Link> 
-                                    </td>
-                                </tr>
-                                )}
-                        </tbody>
-                    </table>
+                        <div className="row">
+                            <div className="col">
+                                <table className="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Date de la commande</th>
+                                            <th style={{width: '100px'}}> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { this.state.commandes.map(commande => 
+                                            <tr key={commande.id}>
+                                                <td>{commande.id}</td>
+                                                <td>{commande.date}</td>
+                                                <td>
+                                                    <button className="btn btn-warning"
+                                                    onClick={this.onCommandeSelect.bind(this,commande.id)}>Afficher</button>
+                                                </td>
+                                            </tr>
+                                            )}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="col">
+                            <div className="table-responsive">
+                                    <table className="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Article</th>
+                                                <th>Prix</th>
+                                                <th>Quantité</th>
+                                                <th>Montant</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            { this.state.commande.map((commande,index) => 
+                                                
+                                                <tr key={index}>
+                                                    <td>{commande.article.intitule}</td>
+                                                    <td>{commande.prix}</td>
+                                                    <td>
+                                                         {commande.quantite} 
+                                                    </td>
+                                                    <td>{commande.montant}</td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                        <tfoot  > 
+                                            <tr>
+                                                <th>TOTAL</th>
+                                                <th colSpan="4" className="text-right">{this.state.commande.total}</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>        
+                            </div>
+                        </div>
+                   
                     </div>
                 </div>
             </div>
@@ -78,4 +109,4 @@ class categorie extends React.Component{
     }
 }
 
-export default categorie;  
+export default commande;  

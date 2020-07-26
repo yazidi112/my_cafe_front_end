@@ -1,6 +1,7 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 import api from '../apis/api';
+import jwt from 'jsonwebtoken';
 
 class Login extends React.Component{
     state = { token : '', email : '',password: '' , message: '', logged: false};
@@ -22,8 +23,8 @@ class Login extends React.Component{
         res => {
                 const token = res.data.token;
                 this.setState({ token: token });
-                console.log(res);
-                localStorage.setItem('token',this.state.token);
+                localStorage.setItem('token', this.state.token);
+                localStorage.setItem('user', JSON.stringify(jwt.decode(token)));
                 message = this.state.token;
                 this.setState({ message, logged: true }); 
         },
