@@ -4,7 +4,7 @@ import api from '../apis/api';
 import jwt from 'jsonwebtoken';
 
 class Login extends React.Component{
-    state = { token : '', email : '',password: '' , message: '', logged: false};
+    state = {  email : '',password: '' , message: '', logged: false};
 
      
     onEmailChange = (event) => {
@@ -21,12 +21,21 @@ class Login extends React.Component{
         this.setState({ message }); 
         api.post('login_check',{"username":this.state.email,"password": this.state.password }).then(
         res => {
-                const token = res.data.token;
-                this.setState({ token: token });
-                localStorage.setItem('token', this.state.token);
-                localStorage.setItem('user', JSON.stringify(jwt.decode(token)));
-                message = this.state.token;
-                this.setState({ message, logged: true }); 
+            if(res.data.token){
+                localStorage.setItem('token', res.data.token);
+                message = "Authentification reussit.";
+                api.get('users?email='+this.state.email).then(
+                    res => {
+                        console.log();
+                        let data = res.data[0];
+                        let user = {id: data.id, email: data.email};
+                        localStorage.setItem('user', JSON.stringify(user));
+                        this.setState({ message, logged: true }); 
+                    }
+                );
+                
+            }
+                
         },
             err => {
                 const message = err.message;
@@ -36,7 +45,7 @@ class Login extends React.Component{
      
     render(){
         if(this.state.logged) 
-            return <Redirect to="/commande/new" />
+            return <Redirect to="/" />
         return (
              <div className="container">
                 <div className="card m-3">

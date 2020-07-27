@@ -4,12 +4,13 @@ import Nav from '../Nav';
 
 class commande extends React.Component{
     state = { 
-        commandes : [],
-        commande : []
+        commandes   : [],
+        commande    : [],
+        user        : JSON.parse(localStorage.getItem('user'))
     };
 
     commandesRefresh(){
-        api.get('/commandes')
+        api.get('/commandes?user='+this.state.user.id)
             .then(res => {
                 const commandes = res.data;
                 this.setState({ commandes }); 
@@ -72,20 +73,19 @@ class commande extends React.Component{
                                                 <th>Prix</th>
                                                 <th>Quantité</th>
                                                 <th>Montant</th>
-                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             { this.state.commande.map((commande,index) => 
                                                 
                                                 <tr key={index}>
-                                                    <td>{commande.article.intitule}</td>
-                                                    <td>{commande.prix}</td>
+                                                    <td>{commande.article.title}</td>
+                                                    <td>{commande.prix.toFixed(2)}</td>
                                                     <td>
                                                          {commande.quantite} 
                                                     </td>
-                                                    <td>{commande.montant}</td>
                                                     <td>
+                                                        {(commande.prix * commande.quantite).toFixed(2)}
                                                     </td>
                                                 </tr>
                                             )}
@@ -93,7 +93,9 @@ class commande extends React.Component{
                                         <tfoot  > 
                                             <tr>
                                                 <th>TOTAL</th>
-                                                <th colSpan="4" className="text-right">{this.state.commande.total}</th>
+                                                <th colSpan="4" className="text-right">
+                                                    {(this.state.commande.reduce((a, b) => parseFloat(a) + parseFloat(b.prix*b.quantite), 0)).toFixed(2)}
+                                                </th>
                                             </tr>
                                         </tfoot>
                                     </table>

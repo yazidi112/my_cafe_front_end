@@ -52,7 +52,7 @@ class categorie extends React.Component{
                     <table className="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>Image</th>
                                 <th>Titre</th>
                                 <th style={{width : 200}}>Action</th>
                             </tr>
@@ -60,7 +60,7 @@ class categorie extends React.Component{
                         <tbody>
                             { this.state.categories.map(categorie => 
                                 <tr key={categorie.id}>
-                                    <td>{categorie.id}</td>
+                                    <td><img src={'img/foods/'+categorie.image} style={{width: '100px'}} /></td>
                                     <td>{categorie.title}</td>
                                     <td>
                                         <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  

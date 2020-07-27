@@ -4,13 +4,13 @@ import api from '../../apis/api';
 import Nav from '../Nav';
 
 class categoryNew extends React.Component{
-    state = { redirect: null, title : null  };
+    state = { redirect: null, title : null, image: null  };
 
      
      
     onFormSubmit = (event) => {
         event.preventDefault();
-        api.post('/categories',{title: this.state.title})
+        api.post('/categories',{title: this.state.title, image: this.state.image})
             .then(res => {
                 console.log(res);
                 this.setState({redirect: true});
@@ -35,6 +35,10 @@ class categoryNew extends React.Component{
                             <div className="form-group">
                                 <label>Titre</label>
                                 <input type="text" onChange={(event)=>{this.setState({title: event.target.value})}} className="form-control" />
+                            </div>
+                            <div className="form-group">
+                                <label>Image</label>
+                                <input type="text" onChange={(event)=>{this.setState({image: event.target.value})}} className="form-control" />
                             </div>
                              
                             <button className="btn btn-primary">Ajouter</button>

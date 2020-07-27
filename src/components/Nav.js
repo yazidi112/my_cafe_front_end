@@ -7,16 +7,15 @@ class Nav extends React.Component{
      
 
     componentDidMount(){
-        let user = JSON.parse(localStorage.getItem('user'));
-        console.log(user);
-        this.setState({username: user.username});
+        let user = JSON.parse(localStorage.getItem('user'));        
+        this.setState({email: user.email});
     }
     
     state = { username: ''};
    
     render(){
             return ( 
-                 
+                 <div>
                     <nav className="navbar navbar-expand-lg  navbar-dark bg-dark justify-content-center">
                         <a className="navbar-brand" href="#">My <i>Café</i> 2020 <br/><small style={{fontSize: '50%'}}>By Imran YAZIDI</small></a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,11 +44,28 @@ class Nav extends React.Component{
                                 </li>
                             </ul>
                             <span className="navbar-text">
-                                {this.state.username} 
+                                {this.state.email} 
                                 <Link className="btn btn-danger ml-2" to="/logout" >Déconnexion</Link>
                             </span>
                         </div>
                     </nav>
+                    <nav className="navbar navbar-expand-lg  navbar-dark bg-dark justify-content-center fixed-bottom">
+                      
+
+                      <div className="collapse navbar-collapse" id="navbarSupportedContent2">
+                          <ul className="navbar-nav justify-content-center mr-auto ">
+                           
+                              <li className="nav-item">
+                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/commandes" >Mes Commandes</Link>
+                              </li>
+                              <li className="nav-item">
+                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/commande/new" >Nouvelle Commande</Link>
+                              </li>
+                          </ul>
+                         
+                      </div>
+                  </nav>
+                </div>    
              
             );
         }

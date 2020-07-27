@@ -4,10 +4,12 @@ import api from '../../apis/api';
 import Nav from '../Nav';
 
 class commandeNew extends React.Component{
-    state = { redirect   : null,
+    state = { 
+              redirect   : null,
               categories : [],
               articles   : [],
-              commande   : { lignes: [], total: 0 } ,
+              commande   : { lignes: [], total: 0 },
+              user       : JSON.parse(localStorage.getItem('user'))
             };
 
     componentDidMount(){
@@ -20,7 +22,7 @@ class commandeNew extends React.Component{
                 const categories = res.data;
                 this.setState({ categories }); 
         })
-        api.get('/articles/?category=1')
+        api.get('/articles?category=1')
             .then(res => {
                 const articles = res.data;
                 this.setState({ articles }); 
@@ -31,7 +33,7 @@ class commandeNew extends React.Component{
     
 
     onCategorySelect = (id) => {
-        api.get('/articles/?category='+id)
+        api.get('/articles?category='+id)
             .then(res => {
                 const articles = res.data;
                 this.setState({ articles }); 
@@ -39,7 +41,7 @@ class commandeNew extends React.Component{
     }
      
 
-    onArticleSelect = (id,intitule, prix ) => {
+    onArticleSelect = (id, intitule, prix ) => {
         let ligne        = {};
         ligne.article    = {id: id, intitule: intitule};
         ligne.prix       = parseFloat(prix).toFixed(2);
@@ -74,10 +76,15 @@ class commandeNew extends React.Component{
         this.setState({commande});
     }
 
+    onCommandeNew = () => {
+        let commande   = { lignes: [], total: 0 };
+        this.setState({commande});
+    }
+
     onCommandePost = (event) => {
         event.preventDefault();
         //  ajout une commande
-        api.post('/commandes',{user:'/api/users/1',date: "2020-07-25"}).then(
+        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: "2020-07-25"}).then(
             res => {
                 if(res.data.id){
                     this.state.commande.lignes.map((c) => {
@@ -90,6 +97,7 @@ class commandeNew extends React.Component{
                             }).then(
                                 res => {
                                     console.log(res.data);
+                                    this.onCommandeNew();
                                 },
                                 err => {
                                     console.log(err)
@@ -114,33 +122,38 @@ class commandeNew extends React.Component{
             <div>
                 <Nav />
                  
-                <div className="row">
+                <div className="row h-100">
                    
                     <div className="col-md-2">
-                        <div className="card m-3">
+                        <div className="card m-3 h-100">
                              
                             <div className="card-body">
                                 { this.state.categories.map(categorie => 
-                                    <button className="btn btn-secondary  w-100 my-1" 
-                                        key={categorie.id}
-                                        onClick={this.onCategorySelect.bind(this,categorie.id)}>
-                                        {categorie.title}
-                                    </button>
+                                    <div key={categorie.id}>
+                                        
+                                        <button className="w-100 my-1" 
+                                            onClick={this.onCategorySelect.bind(this,categorie.id)}>
+                                            <img src={'/img/foods/'+categorie.image} className="w-100"/>
+                                        </button>
+                                    </div>
                                 )}
                                 
                             </div>
                         </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-5">
                         <div className="card m-3">
                             
                             <div className="card-body">
                                 
                                 { this.state.articles.map(article => 
-                                    <button className="btn  btn-secondary w-100 my-1" 
+                                    <button className="btn  btn-light m-1" 
                                         key={article.id}
                                         onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
+                                        
+                                        <img src={'/img/foods/'+article.image} style={{width: '100px'}} />
+                                        <br/>
                                         {article.title} <strong>{article.price} DH</strong>
                                     </button>
                                 )}                                
@@ -196,21 +209,18 @@ class commandeNew extends React.Component{
                                 </div>   
                             </div>
                             <div className="card-footer bg-success text-white text-right">
-                                <button className="btn btn-light" 
+                                <button className="btn btn-light m-1" 
+                                    onClick={this.onCommandeNew.bind(this)}>
+                                        Nouveau
+                                </button>
+                                <button className="btn btn-light m-1" 
                                     onClick={this.onCommandePost.bind(this)}>
                                         Valider
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-2">
-                        <div className="card m-3">
-                             
-                            <div className="card-body">
-                                <Link className="btn btn-info pull-right" to="/commandes" >Commandes</Link>
-                            </div>
-                        </div>
-                    </div>
+                     
                 </div>
             </div>
            

@@ -52,7 +52,7 @@ class Article extends React.Component{
                     <table className="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>Image</th>
                                 <th>Titre</th>
                                 <th>Prix</th>
                                 <th style={{width : 200}}>Action</th>
@@ -61,7 +61,7 @@ class Article extends React.Component{
                         <tbody>
                             { this.state.articles.map(article => 
                                 <tr key={article.id}>
-                                    <td>{article.id}</td>
+                                    <td><img src={'img/foods/'+article.image} style={{width: '100px'}} /></td>
                                     <td>{article.title}</td>
                                     <td>{article.price}</td>
                                     <td>
