@@ -19,6 +19,13 @@
         background-image : url('%PUBLIC_URL%/img/2.jpg');
         background-size: cover;
       }
+      @media print
+      {    
+        @page { 
+          margin: 10px;
+          width:400px; 
+        }
+      }
     </style>
 
   </head>

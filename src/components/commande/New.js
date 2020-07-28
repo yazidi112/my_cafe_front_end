@@ -1,11 +1,15 @@
 import React from 'react';
-import { Link ,Redirect}  from 'react-router-dom'
+import {Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
+import date from '../helpers/date';
+import Popout from 'react-popout';
+
 
 class commandeNew extends React.Component{
     state = { 
               redirect   : null,
+              print      : false,
               categories : [],
               articles   : [],
               commande   : { lignes: [], total: 0 },
@@ -14,6 +18,7 @@ class commandeNew extends React.Component{
 
     componentDidMount(){
         this.categoriesRefresh();
+        console.log(date());
     }
 
     categoriesRefresh(){
@@ -84,7 +89,7 @@ class commandeNew extends React.Component{
     onCommandePost = (event) => {
         event.preventDefault();
         //  ajout une commande
-        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: "2020-07-25"}).then(
+        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date()}).then(
             res => {
                 if(res.data.id){
                     this.state.commande.lignes.map((c) => {
@@ -97,7 +102,7 @@ class commandeNew extends React.Component{
                             }).then(
                                 res => {
                                     console.log(res.data);
-                                    this.onCommandeNew();
+                                    this.onCommandePrint();
                                 },
                                 err => {
                                     console.log(err)
@@ -113,21 +118,72 @@ class commandeNew extends React.Component{
         )
     }
 
-    
+    onCommandePrint = () => {
+        this.setState({print: true})
+    }
+
+     
+
 
     render(){
         if(this.state.redirect)
             return <Redirect to="/categories" />
+        if(this.state.print)
+            return (
+                    <Popout title='Window title' onLoading={() => window.print()} onClosing={()=>this.setState({print:false})}>
+                        <div>
+                            <h1>Café Espace YAZIDI</h1>
+                            <p>Tél:</p>
+                            <p>Adresse:</p>
+                            <table border="1" cellspacing="0" cellpadding="0" style={{ width: '100%'}}>
+                                <thead>
+                                    <tr>
+                                        <th>Article</th>
+                                        <th>Prix</th>
+                                        <th>Quantité</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { this.state.commande.lignes.map((commande,index) => 
+                                        
+                                        <tr key={index}>
+                                            <td>{commande.article.intitule}</td>
+                                            <td>{commande.prix}</td>
+                                            <td>
+                                                <span className="p-2">{commande.quantite}</span>
+                                            </td>
+                                            <td>{commande.montant}</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                                <tfoot  > 
+                                    <tr>
+                                        <th>TOTAL</th>
+                                        <th colSpan="4" className="text-right">{this.state.commande.total}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <p>
+                                Code WIFI:
+                            </p>
+                            <p>
+                                Merci pour votre visite
+                            </p>
+                        </div>
+                    </Popout>)
+
+                
         return (
             <div>
                 <Nav />
-                 
                 <div className="row h-100">
-                   
+                
                     <div className="col-md-2">
-                        <div className="card m-3 h-100">
-                             
+                        <div className="card m-3 h-100 d-print-none">
+                            
                             <div className="card-body">
+                                {this.state.print}
                                 { this.state.categories.map(categorie => 
                                     <div key={categorie.id}>
                                         
@@ -143,18 +199,20 @@ class commandeNew extends React.Component{
                     </div>
 
                     <div className="col-md-5">
-                        <div className="card m-3">
+                        <div className="card m-3 d-print-none">
                             
                             <div className="card-body">
                                 
                                 { this.state.articles.map(article => 
-                                    <button className="btn  btn-light m-1" 
+                                    <button className="btn btn-sm btn-light m-1" 
                                         key={article.id}
                                         onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
                                         
-                                        <img src={'/img/foods/'+article.image} style={{width: '100px'}} />
+                                        <img src={'/img/foods/'+article.image} style={{width: '90px'}} />
                                         <br/>
-                                        {article.title} <strong>{article.price} DH</strong>
+                                        {article.title} 
+                                        <br/>
+                                        <strong>{article.price} DH</strong>
                                     </button>
                                 )}                                
                             </div>
@@ -166,7 +224,7 @@ class commandeNew extends React.Component{
                             
                             <div className="card-body">
                                 <div className="table-responsive">
-                                    <table className="table table-bordered table-striped">
+                                    <table className="print table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Article</th>
@@ -220,7 +278,7 @@ class commandeNew extends React.Component{
                             </div>
                         </div>
                     </div>
-                     
+                    
                 </div>
             </div>
            
