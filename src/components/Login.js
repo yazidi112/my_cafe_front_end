@@ -28,7 +28,7 @@ class Login extends React.Component{
                     res => {
                         console.log();
                         let data = res.data[0];
-                        let user = {id: data.id, email: data.email};
+                        let user = {id: data.id, email: data.email, roles: data.roles};
                         localStorage.setItem('user', JSON.stringify(user));
                         this.setState({ message, logged: true }); 
                     }

@@ -52,7 +52,10 @@ class user extends React.Component{
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Nom et prénom</th>
                                 <th>Email</th>
+                                <th>Tél</th>
+                                <th>Admin</th>
                                 <th style={{width : 200}}>Action</th>
                             </tr>
                         </thead>
@@ -60,9 +63,16 @@ class user extends React.Component{
                             { this.state.users.map(user => 
                                 <tr key={user.id}>
                                     <td>{user.id}</td>
+                                    <td>{user.nom} {user.prenom} </td>
                                     <td>{user.email}</td>
+                                    <td>{user.tel}</td>
+                                    <td>{user.roles.indexOf("ROLE_ADMIN")>=0?'oui':'non'}</td>
                                     <td>
-                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,user.id)}>Supprimer</a>  
+                                        {
+                                            user.roles.indexOf("ROLE_ADMIN")<0 &&
+                                            <a href="#"   className="btn btn-sm btn-danger  mr-3 {user.roles.indexOf('ROLE_ADMIN')>=0?'disabled':''}" onClick={this.onDelete.bind(this,user.id)}>Supprimer</a>  
+                                        }
+                                        
                                         <Link className="btn btn-sm btn-success" to={`/users/edit/${user.id}`} >Modifier</Link> 
                                     </td>
                                 </tr>

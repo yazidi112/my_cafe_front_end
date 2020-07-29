@@ -4,16 +4,19 @@ import user from './users/Liste';
 
 class Nav extends React.Component{
 
-     
+     state = {
+         email: '',
+         roles : ''
+     }
 
     componentDidMount(){
         let user = JSON.parse(localStorage.getItem('user'));        
-        this.setState({email: user.email});
+        this.setState({email : user.email});
+        this.setState({roles : user.roles});
     }
-    
-    state = { username: ''};
    
     render(){
+        
             return ( 
                  <div>
                     <nav className="navbar navbar-expand-lg  navbar-dark bg-dark ">
@@ -45,6 +48,7 @@ class Nav extends React.Component{
                                 <Link className="btn btn-info pull-right m-1 btn-sm" to="/commandes" >Mes Commandes</Link>
                               </li>
                           </ul>
+                           { this.state.roles.indexOf('ROLE_ADMIN')>=0 &&
                             <span className="navbar-text">
                                 <Link className="btn btn-primary pull-right m-1 btn-sm" to="/categories" >Historique</Link>
                                 <Link className="btn btn-primary pull-right m-1 btn-sm" to="/categories" >Catégories</Link>
@@ -52,11 +56,13 @@ class Nav extends React.Component{
                                 <Link className="btn btn-primary pull-right m-1 btn-sm" to="/users" >Utilisateurs</Link>
                                 <Link className="btn btn-primary pull-right m-1 btn-sm" to="/articles" >Paramètres</Link>
                             </span>
+                            }
                       </div>
                   </nav>
                 </div>    
              
             );
+        
         }
 }
 

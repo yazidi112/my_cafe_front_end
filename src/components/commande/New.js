@@ -128,10 +128,13 @@ class commandeNew extends React.Component{
     render(){
         if(this.state.redirect)
             return <Redirect to="/categories" />
-        if(this.state.print)
+         
             return (
-                    <Popout title='Window title' onLoading={() => window.print()} onClosing={()=>this.setState({print:false})}>
-                        <div>
+                <div>
+                    {this.state.print &&
+                    <Popout title='Window title' onClosing={()=>this.setState({print:false})}>
+                        <html>
+                            <body>
                             <h1>Café Espace YAZIDI</h1>
                             <p>Tél:</p>
                             <p>Adresse:</p>
@@ -170,12 +173,11 @@ class commandeNew extends React.Component{
                             <p>
                                 Merci pour votre visite
                             </p>
-                        </div>
-                    </Popout>)
-
-                
-        return (
-            <div>
+                            </body>
+                        </html>
+                    </Popout>
+                }
+            
                 <Nav />
                 <div className="row h-100">
                 
@@ -183,7 +185,6 @@ class commandeNew extends React.Component{
                         <div className="card m-3 h-100 d-print-none">
                             
                             <div className="card-body">
-                                {this.state.print}
                                 { this.state.categories.map(categorie => 
                                     <div key={categorie.id}>
                                         
@@ -193,6 +194,9 @@ class commandeNew extends React.Component{
                                         </button>
                                     </div>
                                 )}
+                                { this.state.categories.length==0 &&
+                                    <p>Aucune catégorie.</p>
+                                }
                                 
                             </div>
                         </div>
@@ -214,7 +218,10 @@ class commandeNew extends React.Component{
                                         <br/>
                                         <strong>{article.price} DH</strong>
                                     </button>
-                                )}                                
+                                )}   
+                                 { this.state.categories.length==0 &&
+                                    <p>Aucun article.</p>
+                                }                             
                             </div>
                         </div>
                     </div>
