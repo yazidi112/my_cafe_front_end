@@ -31,6 +31,7 @@ class ArticleNew extends React.Component{
         return (
             <div>
                  <Nav />
+                 <div className="container"> 
                 <div className="m-3 text-right">
                     <Link className="btn btn-info pull-right" to="/articles" >Articles</Link>
                 </div>
@@ -74,7 +75,7 @@ class ArticleNew extends React.Component{
                          {this.state.article.category}
                     </div>
                 </div>
-                {this.state.redirect}
+                </div>
             </div>
            
           );

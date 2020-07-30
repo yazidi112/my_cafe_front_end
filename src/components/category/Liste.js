@@ -41,9 +41,7 @@ class categorie extends React.Component{
         return (
             <div>
                 <Nav />
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/categories/new" >Ajouter une Catégorie</Link>
-                </div>
+                 
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
                         <h3 className="card-title">Liste des categories</h3>

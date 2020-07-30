@@ -39,22 +39,21 @@ class Nav extends React.Component{
 
                       <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                           <ul className="navbar-nav justify-content-center mr-auto ">
-                           
-                             
-                              <li className="nav-item">
-                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/commande/new" >Nouvelle Commande</Link>
-                              </li>
                                <li className="nav-item">
                                 <Link className="btn btn-info pull-right m-1 btn-sm" to="/commandes" >Mes Commandes</Link>
+                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/commande/new" >+</Link>
                               </li>
                           </ul>
                            { this.state.roles.indexOf('ROLE_ADMIN')>=0 &&
                             <span className="navbar-text">
                                 <Link className="btn btn-primary pull-right m-1 btn-sm" to="/categories" >Historique</Link>
-                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/categories" >Catégories</Link>
-                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/articles" >Articles</Link>
-                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/users" >Utilisateurs</Link>
-                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/articles" >Paramètres</Link>
+                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/categories" >Catégories</Link>
+                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/categories/new" >+</Link>
+                                <Link className="btn btn-warning pull-right m-1 btn-sm" to="/articles" >Articles</Link>
+                                <Link className="btn btn-warning pull-right m-1 btn-sm" to="/articles/new" >+</Link>
+                                <Link className="btn btn-success pull-right m-1 btn-sm" to="/users" >Utilisateurs</Link>
+                                <Link className="btn btn-success pull-right m-1 btn-sm" to="/users/new" >+</Link>
+                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/settings" >Paramètres</Link>
                             </span>
                             }
                       </div>

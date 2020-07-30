@@ -3,7 +3,6 @@ import {Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
 import date from '../helpers/date';
-import Popout from 'react-popout';
 
 
 class commandeNew extends React.Component{
@@ -13,12 +12,18 @@ class commandeNew extends React.Component{
               categories : [],
               articles   : [],
               commande   : { lignes: [], total: 0 },
-              user       : JSON.parse(localStorage.getItem('user'))
+              user       : JSON.parse(localStorage.getItem('user')),
+              settings   : {},
+              messages   : {article: '',commande: ''}
             };
 
     componentDidMount(){
         this.categoriesRefresh();
-        console.log(date());
+        api.get('/settings/'+1)
+        .then(res => {
+            const settings = res.data;
+            this.setState({ settings }); 
+        }) 
     }
 
     categoriesRefresh(){
@@ -38,10 +43,29 @@ class commandeNew extends React.Component{
     
 
     onCategorySelect = (id) => {
+        let message = "Chargement en cours..";
+        let messages = this.state.messages;
+        messages.article = message;
+        this.setState({messages});
+        let articles = this.state.articles;
+        articles = [];
+        this.setState({articles});
         api.get('/articles?category='+id)
             .then(res => {
                 const articles = res.data;
-                this.setState({ articles }); 
+                if(articles.length==0){
+                    let message = "Aucun article";
+                    let messages = this.state.messages;
+                    messages.article = message;
+                    this.setState({messages}); 
+                }else{
+                    this.setState({ articles });
+                    let message = "";
+                    let messages = this.state.messages;
+                    messages.article = message;
+                    this.setState({messages}); 
+                }
+                
         }) 
     }
      
@@ -102,14 +126,13 @@ class commandeNew extends React.Component{
                             }).then(
                                 res => {
                                     console.log(res.data);
-                                    this.onCommandePrint();
                                 },
                                 err => {
                                     console.log(err)
                                 }
                             )
                     })
-                    
+                    window.print();
                 }
             },
             err => {
@@ -118,11 +141,7 @@ class commandeNew extends React.Component{
         )
     }
 
-    onCommandePrint = () => {
-        this.setState({print: true})
-    }
-
-     
+   
 
 
     render(){
@@ -131,13 +150,9 @@ class commandeNew extends React.Component{
          
             return (
                 <div>
-                    {this.state.print &&
-                    <Popout title='Window title' onClosing={()=>this.setState({print:false})}>
-                        <html>
-                            <body>
-                            <h1>Café Espace YAZIDI</h1>
-                            <p>Tél:</p>
-                            <p>Adresse:</p>
+                        <div className="bg-white p-3 text-center d-none d-print-block">
+                            <div dangerouslySetInnerHTML={{__html: this.state.settings.printhead}} />
+
                             <table border="1" cellspacing="0" cellpadding="0" style={{ width: '100%'}}>
                                 <thead>
                                     <tr>
@@ -166,25 +181,22 @@ class commandeNew extends React.Component{
                                         <th colSpan="4" className="text-right">{this.state.commande.total}</th>
                                     </tr>
                                 </tfoot>
+                                
                             </table>
-                            <p>
-                                Code WIFI:
-                            </p>
-                            <p>
-                                Merci pour votre visite
-                            </p>
-                            </body>
-                        </html>
-                    </Popout>
-                }
+                            
+                            <div dangerouslySetInnerHTML={{__html: this.state.settings.printfoot}} />
+                                
+                            
+                        </div>
             
                 <Nav />
-                <div className="row h-100">
+                <div className="row h-100 d-print-none">
                 
                     <div className="col-md-2">
-                        <div className="card m-3 h-100 d-print-none">
+                        <div className="card m-3 h-100 ">
                             
                             <div className="card-body">
+                                
                                 { this.state.categories.map(categorie => 
                                     <div key={categorie.id}>
                                         
@@ -203,10 +215,10 @@ class commandeNew extends React.Component{
                     </div>
 
                     <div className="col-md-5">
-                        <div className="card m-3 d-print-none">
+                        <div className="card m-3 ">
                             
                             <div className="card-body">
-                                
+                                {this.state.messages.article }
                                 { this.state.articles.map(article => 
                                     <button className="btn btn-sm btn-light m-1" 
                                         key={article.id}
@@ -219,9 +231,7 @@ class commandeNew extends React.Component{
                                         <strong>{article.price} DH</strong>
                                     </button>
                                 )}   
-                                 { this.state.categories.length==0 &&
-                                    <p>Aucun article.</p>
-                                }                             
+                                                              
                             </div>
                         </div>
                     </div>
@@ -248,17 +258,17 @@ class commandeNew extends React.Component{
                                                     <td>{commande.article.intitule}</td>
                                                     <td>{commande.prix}</td>
                                                     <td>
-                                                        <button className="btn btn-warning"
+                                                        <button className="btn btn-sm btn-warning"
                                                             onClick={this.onLigneQteUpdate.bind(this,index,-1)}>-
                                                         </button>
                                                         <span className="p-2">{commande.quantite}</span>
-                                                        <button className="btn btn-warning"
+                                                        <button className="btn btn-sm btn-warning"
                                                             onClick={this.onLigneQteUpdate.bind(this,index,1)}>+
                                                         </button>
                                                     </td>
                                                     <td>{commande.montant}</td>
                                                     <td>
-                                                        <button className="btn btn-danger"
+                                                        <button className="btn btn-sm btn-danger"
                                                         onClick={this.onArticleDelete.bind(this,index)}>X</button>
                                                     </td>
                                                 </tr>

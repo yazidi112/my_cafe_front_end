@@ -41,37 +41,36 @@ class Article extends React.Component{
         return (
             <div>
                 <Nav />
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/articles/new" >Ajouter un article</Link>
-                </div>
-                <div className="card m-3">
-                    <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Liste des articles</h3>
-                    </div>
-                    <div className="card-body">
-                    <table className="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Titre</th>
-                                <th>Prix</th>
-                                <th style={{width : 200}}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { this.state.articles.map(article => 
-                                <tr key={article.id}>
-                                    <td><img src={'img/foods/'+article.image} style={{width: '100px'}} /></td>
-                                    <td>{article.title}</td>
-                                    <td>{article.price}</td>
-                                    <td>
-                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,article.id)}>Supprimer</a>  
-                                        <Link className="btn btn-sm btn-success" to={`/articles/edit/${article.id}`} >Modifier</Link> 
-                                    </td>
+                <div className="container">
+                    <div className="card m-3">
+                        <div className="card-header bg-info text-white">
+                            <h3 className="card-title">Liste des articles</h3>
+                        </div>
+                        <div className="card-body">
+                        <table className="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Titre</th>
+                                    <th>Prix</th>
+                                    <th style={{width : 200}}>Action</th>
                                 </tr>
-                                )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                { this.state.articles.map(article => 
+                                    <tr key={article.id}>
+                                        <td><img src={'/img/foods/'+article.image} style={{width: '100px'}} /></td>
+                                        <td>{article.title}</td>
+                                        <td>{article.price}</td>
+                                        <td>
+                                            <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,article.id)}>Supprimer</a>  
+                                            <Link className="btn btn-sm btn-success" to={`/articles/edit/${article.id}`} >Modifier</Link> 
+                                        </td>
+                                    </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,18 +1,16 @@
 import React from 'react';
-import { Link ,Redirect}  from 'react-router-dom'
+import {Link ,Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
 
 class userNew extends React.Component{
     state = { redirect: null,
-              user : {email: null, password: null}  
+              user : {nom: null, prenom: null,email: null, password: null, adresse: null, tel: null, role:["ROLE_USER"]}  
             };
 
-     
-     
     onFormSubmit = (event) => {
         event.preventDefault();
-        api.post('/users', this.state.user)
+        api.post('/users/create', this.state.user)
             .then(res => {
                 console.log(res);
                 this.setState({redirect: true});
@@ -25,6 +23,7 @@ class userNew extends React.Component{
         return (
             <div>
                  <Nav />
+                <div className="container">
                 <div className="m-3 text-right">
                     <Link className="btn btn-info pull-right" to="/users" >Utilisateurs</Link>
                 </div>
@@ -34,6 +33,43 @@ class userNew extends React.Component{
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onFormSubmit}>
+                            <div className="form-group">
+                                <label>Nom</label>
+                                <input type="text" onChange={(event)=>{
+                                    let user = this.state.user;
+                                    user.nom = event.target.value;
+                                    this.setState({user})
+                                }} className="form-control" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Prénom</label>
+                                <input type="text" onChange={(event)=>{
+                                    let user = this.state.user;
+                                    user.prenom = event.target.value;
+                                    this.setState({user})
+                                }} className="form-control" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Téléphone</label>
+                                <input type="text" onChange={(event)=>{
+                                    let user = this.state.user;
+                                    user.tel = event.target.value;
+                                    this.setState({user})
+                                }} className="form-control" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Adresse</label>
+                                <input type="text" onChange={(event)=>{
+                                    let user = this.state.user;
+                                    user.adresse = event.target.value;
+                                    this.setState({user})
+                                }} className="form-control" />
+                            </div>
+
+
                             <div className="form-group">
                                 <label>Email</label>
                                 <input type="text" onChange={(event)=>{
@@ -51,9 +87,11 @@ class userNew extends React.Component{
                                 }} className="form-control" />
                             </div>
                              
+                             
                             <button className="btn btn-primary">Ajouter</button>
                         </form>
                          
+                    </div>
                     </div>
                 </div>
             </div>
