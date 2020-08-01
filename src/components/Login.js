@@ -1,51 +1,59 @@
 import React from 'react';
-import {Redirect} from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 import api from '../apis/api';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
+import Keyboard from 'react-simple-keyboard';
+import 'react-simple-keyboard/build/css/index.css';
 
 class Login extends React.Component{
-    state = {  email : '',password: '' , message: '', logged: false};
+    state = {  id: '', email : '',password: '' , message: '', logged: false, personnes: []};
 
-     
-    onEmailChange = (event) => {
-        this.setState({email : event.target.value})
+    componentDidMount() {
+        axios.get('http://127.0.0.1:8000/personnes').then(
+            res => {
+                let personnes = res.data;
+                this.setState({personnes});
+                console.log(this.state.personnes);
+            }
+        );
     }
 
-    onPwdChange = (event) => {
-        this.setState({password : event.target.value})
+    onEmailChange = ( id,email) => {
+         
+        this.setState({email : email});
+        this.setState({id    : id});
+    }
+
+    onPwdChange = (input) => {
+        this.setState({password : input})
     }
 
     onLogin = (event) => {
         event.preventDefault();
-        let message = "Connexion en cours..";
+        let message = <div className="alert alert-warning">Connexion en cours..</div>
         this.setState({ message }); 
         api.post('login_check',{"username":this.state.email,"password": this.state.password }).then(
         res => {
+            
             if(res.data.token){
                 localStorage.setItem('token', res.data.token);
-                message = "Authentification reussit.";
-                api.get('users?email='+this.state.email).then(
-                    res => {
-                        console.log();
-                        let data = res.data[0];
-                        let user = {id: data.id, email: data.email, roles: data.roles};
-                        localStorage.setItem('user', JSON.stringify(user));
-                        this.setState({ message, logged: true }); 
-                    }
-                );
-                
+                this.setState({message: <div className="alert alert-success"> <strong>Success :</strong> Authentication effectué avec succes. redirection en cours..</div> });
+                let roles = jwt.decode(res.data.token).roles;
+                let user = {id: this.state.id, email: this.state.email,roles: roles}
+                localStorage.setItem('user', JSON.stringify(user));
+                this.setState({logged: true});
             }
                 
         },
             err => {
-                const message = err.message;
-                this.setState({ message }); 
+                this.setState({message: <div className="alert alert-danger"> <strong>Erreur d'Authentification:</strong> Nom d'utilisateur ou mot de passe est incorrect.</div>});
         })  
     }
      
     render(){
         if(this.state.logged) 
-            return <Redirect to="/" />
+            return <Route><Redirect to="/" /></Route>
         return (
              <div className="container">
                 <div className="card m-3">
@@ -54,20 +62,33 @@ class Login extends React.Component{
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onLogin}>
-                            
+                            {this.state.message} 
                             <div className="form-group">
-                                <label>Email</label>
-                                <input type="text" onChange= {this.onEmailChange} className="form-control" />
+                                    { this.state.personnes.length==0 && <small>Chargement des utilisateurs en cours..</small>}
+                                    { this.state.personnes.map( p =>
+                                        <button onClick={event => {
+                                                event.preventDefault();
+                                                this.onEmailChange(p.id,p.email)
+                                            }
+                                        }
+                                          className="btn m-2 btn-info">
+                                            <i className="fas fa-user"></i> {p.nom} {p.prenom}
+                                        </button>
+                                    )}
                             </div>
                             <div className="form-group">
-                                <label>Password</label>
-                                <input type="password" onChange= {this.onPwdChange} className="form-control" />
+                                <label>Mot de passe</label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                    <div class="input-group-text">{this.state.email}</div>
+                                    </div>
+                                    <input type="password" value={this.state.password}  className="form-control" />
+                                </div>
+                                <Keyboard onChange={this.onPwdChange} />
                             </div>
                             <button className="btn btn-primary">Connexion</button>
                         </form>
-                        <div class="alert">
-                            {this.state.message} 
-                        </div>
+                         
                         
                     </div>
                 </div>

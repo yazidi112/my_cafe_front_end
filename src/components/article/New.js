@@ -5,8 +5,10 @@ import Nav from '../Nav';
 
 class ArticleNew extends React.Component{
     state = { redirect: null,
-              article : {title : null, price: null, category: null},
-              categories : [] };
+              article : {title : null, price: null, image: null, category: null},
+              categories : [] ,
+              message: ''
+            };
 
     componentDidMount(){
         api.get('/categories')
@@ -19,10 +21,16 @@ class ArticleNew extends React.Component{
      
     onFormSubmit = (event) => {
         event.preventDefault();
-        api.post('/articles',this.state.article)
-            .then(res => {
+        this.setState({message: <div className="alert alert-warning">Ajout en cours..</div>})
+        api.post('/articles',this.state.article).then(
+            res => {
+                this.setState({message: <div className="alert alert-success">Article est bien ajouté.</div>})
                 this.setState({redirect: true});
-        })  
+            },
+            err =>{
+                this.setState({message: <div className="alert alert-danger">Une erreur est survenu merci de ressayer.</div>})
+            }
+        )  
     }
 
     render(){
@@ -30,17 +38,15 @@ class ArticleNew extends React.Component{
             return <Redirect to="/articles" />
         return (
             <div>
-                 <Nav />
-                 <div className="container"> 
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/articles" >Articles</Link>
-                </div>
+                <Nav />
+                <div className="container"> 
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
                         <h3 className="card-title">Ajouter un article</h3>
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onFormSubmit}>
+                            {this.state.message}
                             <div className="form-group">
                                 <label>Titre</label>
                                 <input type="text" onChange={(event)=>{
@@ -58,6 +64,14 @@ class ArticleNew extends React.Component{
                                     }} className="form-control" />
                             </div>
                             <div className="form-group">
+                                <label>Image</label>
+                                <input type="text" onChange={(event)=>{
+                                    let article = this.state.article;
+                                    article.image = event.target.value;
+                                    this.setState({article});
+                                    }} className="form-control" />
+                            </div>
+                            <div className="form-group">
                                 <label>Catégorie</label>
                                 <select onChange={(event)=>{
                                     let article = this.state.article;
@@ -65,6 +79,7 @@ class ArticleNew extends React.Component{
                                     this.setState({article});
                                     console.log(event.target.value);
                                     }} className="form-control">
+                                    <option>Choisir une catégorie</option>
                                     {this.state.categories.map( category => {
                                         return <option key={category.id} value={category.id}>{category.title}</option>
                                     })}
@@ -72,7 +87,7 @@ class ArticleNew extends React.Component{
                             </div>
                             <button className="btn btn-primary">Ajouter</button>
                         </form>
-                         {this.state.article.category}
+                         
                     </div>
                 </div>
                 </div>

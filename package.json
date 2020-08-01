@@ -16,6 +16,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "react-simple-keyboard": "^2.3.117",
     "react-simple-wysiwyg": "0.0.8"
   },
   "scripts": {

@@ -13,6 +13,7 @@ import UserListe from './users/Liste'
 import UserNew from './users/New'
 import UserEdit from './users/Edit'
 import Settings from './settings'
+import Historique from './historique'
 import Login from './Login'
 import Logout from './Logout'
  
@@ -38,6 +39,7 @@ class Home extends React.Component{
                     <Route path="/users/new" exact component ={UserNew} />
                     <Route path="/users/edit/:id" exact component ={UserEdit} />
                     <Route path="/settings" exact component ={Settings} />
+                    <Route path="/historique" exact component ={Historique} />
                     <Route path="/login" exact component ={Login} />
                     <Route path="/logout" exact component ={Logout} />
                 </BrowserRouter>

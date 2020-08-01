@@ -33,28 +33,27 @@ class CategoryNew extends React.Component{
             return <Redirect to="/categories" />
         return (
             <div>
-                 <Nav />
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/Categorys" >Categories</Link>
-                </div>
-                <div className="card m-3">
-                    <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Modifier un Catégorie</h3>
-                    </div>
-                    <div className="card-body">
-                        <form onSubmit={this.onFormSubmit}>
-                            <div className="form-group">
-                                <label>Titre</label>
-                                <input type="text" value={this.state.data.title} onChange={(event)=>{
-                                    let data = this.state.data;
-                                    data.title = event.target.value;
-                                    this.setState({data})}
-                                    } className="form-control" />
-                            </div>
-                             
-                            <button className="btn btn-primary">Modifier</button>
-                        </form>
-                         
+                <Nav />
+                <div className="container"> 
+                    <div className="card m-3">
+                        <div className="card-header bg-info text-white">
+                            <h3 className="card-title">Modifier un Catégorie</h3>
+                        </div>
+                        <div className="card-body">
+                            <form onSubmit={this.onFormSubmit}>
+                                <div className="form-group">
+                                    <label>Titre</label>
+                                    <input type="text" value={this.state.data.title} onChange={(event)=>{
+                                        let data = this.state.data;
+                                        data.title = event.target.value;
+                                        this.setState({data})}
+                                        } className="form-control" />
+                                </div>
+                                
+                                <button className="btn btn-primary">Modifier</button>
+                            </form>
+                            
+                        </div>
                     </div>
                 </div>
             </div>

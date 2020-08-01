@@ -24,12 +24,10 @@ class userNew extends React.Component{
             <div>
                  <Nav />
                 <div className="container">
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/users" >Utilisateurs</Link>
-                </div>
+               
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Ajouter une utilisateur</h3>
+                        Ajouter un utilisateur
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onFormSubmit}>

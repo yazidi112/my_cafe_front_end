@@ -40,45 +40,44 @@ class user extends React.Component{
         return (
             <div>
                 <Nav />
-                <div className="m-3 text-right">
-                    <Link className="btn btn-info pull-right" to="/users/new" >Ajouter un utilisateur</Link>
-                </div>
-                <div className="card m-3">
-                    <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Liste des utilisateurs</h3>
-                    </div>
-                    <div className="card-body">
-                    <table className="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom et prénom</th>
-                                <th>Email</th>
-                                <th>Tél</th>
-                                <th>Admin</th>
-                                <th style={{width : 200}}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { this.state.users.map(user => 
-                                <tr key={user.id}>
-                                    <td>{user.id}</td>
-                                    <td>{user.nom} {user.prenom} </td>
-                                    <td>{user.email}</td>
-                                    <td>{user.tel}</td>
-                                    <td>{user.roles.indexOf("ROLE_ADMIN")>=0?'oui':'non'}</td>
-                                    <td>
-                                        {
-                                            user.roles.indexOf("ROLE_ADMIN")<0 &&
-                                            <a href="#"   className="btn btn-sm btn-danger  mr-3 {user.roles.indexOf('ROLE_ADMIN')>=0?'disabled':''}" onClick={this.onDelete.bind(this,user.id)}>Supprimer</a>  
-                                        }
-                                        
-                                        <Link className="btn btn-sm btn-success" to={`/users/edit/${user.id}`} >Modifier</Link> 
-                                    </td>
+                <div className="container"> 
+                    <div className="card m-3">
+                        <div className="card-header bg-info text-white">
+                            Liste des utilisateurs
+                        </div>
+                        <div className="card-body">
+                        <table className="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom et prénom</th>
+                                    <th>Email</th>
+                                    <th>Tél</th>
+                                    <th>Admin</th>
+                                    <th style={{width : 200}}>Action</th>
                                 </tr>
-                                )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                { this.state.users.map(user => 
+                                    <tr key={user.id}>
+                                        <td>{user.id}</td>
+                                        <td>{user.nom} {user.prenom} </td>
+                                        <td>{user.email}</td>
+                                        <td>{user.tel}</td>
+                                        <td>{user.roles.indexOf("ROLE_ADMIN")>=0?'oui':'non'}</td>
+                                        <td>
+                                            {
+                                                user.roles.indexOf("ROLE_ADMIN")<0 &&
+                                                <a href="#"   className="btn btn-sm btn-danger  mr-3 {user.roles.indexOf('ROLE_ADMIN')>=0?'disabled':''}" onClick={this.onDelete.bind(this,user.id)}>Supprimer</a>  
+                                            }
+                                            
+                                            <Link className="btn btn-sm btn-success" to={`/users/edit/${user.id}`} >Modifier</Link> 
+                                        </td>
+                                    </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

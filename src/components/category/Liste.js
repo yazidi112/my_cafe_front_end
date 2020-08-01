@@ -41,33 +41,34 @@ class categorie extends React.Component{
         return (
             <div>
                 <Nav />
-                 
-                <div className="card m-3">
-                    <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Liste des categories</h3>
-                    </div>
-                    <div className="card-body">
-                    <table className="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Titre</th>
-                                <th style={{width : 200}}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { this.state.categories.map(categorie => 
-                                <tr key={categorie.id}>
-                                    <td><img src={'img/foods/'+categorie.image} style={{width: '100px'}} /></td>
-                                    <td>{categorie.title}</td>
-                                    <td>
-                                        <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  
-                                        <Link className="btn btn-sm btn-success" to={`/categories/edit/${categorie.id}`} >Modifier</Link> 
-                                    </td>
+                <div className="container">
+                    <div className="card m-3">
+                        <div className="card-header bg-info text-white">
+                            <h3 className="card-title">Liste des categories</h3>
+                        </div>
+                        <div className="card-body">
+                        <table className="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Titre</th>
+                                    <th style={{width : 200}}>Action</th>
                                 </tr>
-                                )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                { this.state.categories.map(categorie => 
+                                    <tr key={categorie.id}>
+                                        <td><img src={'img/foods/'+categorie.image} style={{width: '100px'}} /></td>
+                                        <td>{categorie.title}</td>
+                                        <td>
+                                            <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  
+                                            <Link className="btn btn-sm btn-success" to={`/categories/edit/${categorie.id}`} >Modifier</Link> 
+                                        </td>
+                                    </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </div>
             </div>

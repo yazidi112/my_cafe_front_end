@@ -4,14 +4,16 @@ import Nav from '../Nav';
 
 class commande extends React.Component{
     state = { 
-        commandes   : [],
-        commande    : [],
-        user        : JSON.parse(localStorage.getItem('user')) 
+        users           : [],
+        commandes       : [],
+        commande        : [],
+        user            : JSON.parse(localStorage.getItem('user')),
+        selecteduserid  : null
     };
 
     onDateChange = (e) =>{
         let date = e.target.value.split("T")[0];
-        api.get('/commandes?user='+this.state.user.id+'&date='+ date)
+        api.get('/commandes?user='+this.state.selecteduserid+'&date='+ date)
             .then(res => {
                 const commandes = res.data;
                 this.setState({ commandes }); 
@@ -19,7 +21,10 @@ class commande extends React.Component{
     }
 
     componentDidMount(){
-        //this.commandesRefresh();
+        api.get('/users')
+            .then(res => {
+                this.setState({ users: res.data }); 
+        }) 
     }
      
     onCommandeSelect(id){
@@ -39,12 +44,28 @@ class commande extends React.Component{
                             <div className="col">
                                 <div className="card m-3">
                                     <div className="card-header bg-info text-white">
+                                        Utilisateurs
+                                    </div>
+                                    <div className="card-body">
+                                        {this.state.users.map(u => {
+                                            return <button className="btn btn-info m-1"
+                                                onClick={e => {
+                                                    this.setState({selecteduserid: u.id})
+                                                }}
+                                            >{u.nom} {u.prenom}</button>
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col">
+                                <div className="card m-3">
+                                    <div className="card-header bg-info text-white">
                                         Commandes
                                     </div>
                                     <div className="card-body">
                                             <div className="form-group">
-                                                <input type="date" onChange={this.onDateChange.bind(this)} className="form-control" />
-                                            </div> 
+                                                <input type="date" onChange={this.onDateChange} className="form-control" />
+                                            </div>
                                             <div className="table-responsive" >
                                                 <table className="table table-bordered table-striped">
                                                     <thead>
@@ -61,7 +82,7 @@ class commande extends React.Component{
                                                                 <td>{commande.date}</td>
                                                                 <td>
                                                                     <button className="btn btn-warning"
-                                                                    onClick={this.onCommandeSelect.bind(this,commande.id,commande.date)}>Afficher</button>
+                                                                    onClick={this.onCommandeSelect.bind(this,commande.id)}>Afficher</button>
                                                                 </td>
                                                             </tr>
                                                             )}

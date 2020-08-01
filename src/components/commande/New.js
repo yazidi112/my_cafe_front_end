@@ -7,14 +7,16 @@ import date from '../helpers/date';
 
 class commandeNew extends React.Component{
     state = { 
-              redirect   : null,
-              print      : false,
-              categories : [],
-              articles   : [],
-              commande   : { lignes: [], total: 0 },
-              user       : JSON.parse(localStorage.getItem('user')),
-              settings   : {},
-              messages   : {article: '',commande: ''}
+              redirect          : null,
+              print             : false,
+              categories        : [],
+              articles          : [],
+              commande          : { lignes: [], total: 0 },
+              user              : JSON.parse(localStorage.getItem('user')),
+              settings          : {},
+              messages          : {article: '' },
+              messagecommande   : '',
+              commandesaved     : false
             };
 
     componentDidMount(){
@@ -108,11 +110,17 @@ class commandeNew extends React.Component{
     onCommandeNew = () => {
         let commande   = { lignes: [], total: 0 };
         this.setState({commande});
+        this.setState({messagecommande: ''});
+        this.setState({commandesaved: false});
     }
 
     onCommandePost = (event) => {
         event.preventDefault();
         //  ajout une commande
+        if(this.state.commandesaved)
+            return false;
+            
+        this.setState({messagecommande: <div className="alert alert-warning">Commande en cours de sauvgarder..</div>})
         api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date()}).then(
             res => {
                 if(res.data.id){
@@ -132,6 +140,8 @@ class commandeNew extends React.Component{
                                 }
                             )
                     })
+                    this.setState({messagecommande: <div className="alert alert-success">Commande Sauvgardé avec l'ID: {res.data.id} </div>})
+                    this.setState({commandesaved: true});
                     window.print();
                 }
             },
@@ -198,13 +208,13 @@ class commandeNew extends React.Component{
                             <div className="card-body">
                                 
                                 { this.state.categories.map(categorie => 
-                                    <div key={categorie.id}>
+                                    
                                         
-                                        <button className="w-100 my-1" 
+                                        <button className="btn btn-sm btn-light m-1"  key={categorie.id}
                                             onClick={this.onCategorySelect.bind(this,categorie.id)}>
-                                            <img src={'/img/foods/'+categorie.image} className="w-100"/>
+                                            <img src={'/img/foods/'+categorie.image}  style={{width: '90px'}} />
                                         </button>
-                                    </div>
+                                    
                                 )}
                                 { this.state.categories.length==0 &&
                                     <p>Aucune catégorie.</p>
@@ -241,6 +251,7 @@ class commandeNew extends React.Component{
                             
                             <div className="card-body">
                                 <div className="table-responsive">
+                                    {this.state.messagecommande}
                                     <table className="print table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -288,7 +299,7 @@ class commandeNew extends React.Component{
                                     onClick={this.onCommandeNew.bind(this)}>
                                         Nouveau
                                 </button>
-                                <button className="btn btn-light m-1" 
+                                <button className="btn btn-light m-1"
                                     onClick={this.onCommandePost.bind(this)}>
                                         Valider
                                 </button>

@@ -34,9 +34,10 @@ class userNew extends React.Component{
         return (
             <div>
                  <Nav />
+                 <div className="container"> 
                 <div className="card m-3">
                     <div className="card-header bg-info text-white">
-                        <h3 className="card-title">Modifier un utilisateur</h3>
+                         Modifier un utilisateur 
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onFormSubmit}>
@@ -92,6 +93,7 @@ class userNew extends React.Component{
                          
                     </div>
                 </div>
+            </div>
             </div>
           );
     }

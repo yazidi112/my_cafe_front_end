@@ -40,13 +40,13 @@ class Nav extends React.Component{
                       <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                           <ul className="navbar-nav justify-content-center mr-auto ">
                                <li className="nav-item">
-                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/commandes" >Mes Commandes</Link>
                                 <Link className="btn btn-info pull-right m-1 btn-sm" to="/commande/new" >+</Link>
+                                <Link className="btn btn-info pull-right m-1 btn-sm" to="/commandes" >Mes Commandes</Link>
                               </li>
                           </ul>
                            { this.state.roles.indexOf('ROLE_ADMIN')>=0 &&
                             <span className="navbar-text">
-                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/categories" >Historique</Link>
+                                <Link className="btn btn-primary pull-right m-1 btn-sm" to="/historique" >Historique</Link>
                                 <Link className="btn btn-info pull-right m-1 btn-sm" to="/categories" >Catégories</Link>
                                 <Link className="btn btn-info pull-right m-1 btn-sm" to="/categories/new" >+</Link>
                                 <Link className="btn btn-warning pull-right m-1 btn-sm" to="/articles" >Articles</Link>
