@@ -6,8 +6,7 @@ import Nav from '../Nav';
 class user extends React.Component{
     state = { 
         users : [],
-        userNewData: {title:'', price: ''},
-        userEditData: {id:'', title:'', price: ''}
+        message: ''
     };
 
     usersRefresh(){
@@ -25,10 +24,12 @@ class user extends React.Component{
     onDelete = (id) => {
         if(!window.confirm("Etes-vous sûr de vouloir supprimer ?"))
             return false;
-
+        this.setState({message: <div className="alert alert-warning">Suppression en cours..</div>});
         api.delete(`/users/${id}`).then(res => {
-            console.log(res);
+            this.setState({message: <div className="alert alert-success">Suppression effectué.</div>});
             this.usersRefresh();
+        },err => {
+            this.setState({message: <div className="alert alert-danger"><strong>Erreur: </strong>Suppression n'est pas effectué.</div>});
         })  
     }
 
@@ -46,6 +47,7 @@ class user extends React.Component{
                             Liste des utilisateurs
                         </div>
                         <div className="card-body">
+                        {this.state.message}
                         <table className="table table-bordered table-striped">
                             <thead>
                                 <tr>

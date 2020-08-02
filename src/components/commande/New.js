@@ -11,10 +11,10 @@ class commandeNew extends React.Component{
               print             : false,
               categories        : [],
               articles          : [],
-              commande          : { lignes: [], total: 0 },
+              commande          : {id:null, lignes: [], user: null, date: null, total: 0 },
               user              : JSON.parse(localStorage.getItem('user')),
               settings          : {},
-              messages          : {article: '' },
+              messages          : {article: ''},
               messagecommande   : '',
               commandesaved     : false
             };
@@ -120,10 +120,15 @@ class commandeNew extends React.Component{
         if(this.state.commandesaved)
             return false;
             
-        this.setState({messagecommande: <div className="alert alert-warning">Commande en cours de sauvgarder..</div>})
+        this.setState({messagecommande: <div className="alert alert-warning">Commande en cours de sauvgarde..</div>})
         api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date()}).then(
             res => {
                 if(res.data.id){
+                    let commande    = this.state.commande;
+                    commande.id     =  res.data.id;
+                    commande.user   = res.data.user;
+                    commande.date   = res.data.date;
+                    this.setState({commande});
                     this.state.commande.lignes.map((c) => {
                         //  ajout une ligne de commande
                         return api.post('/lignecommandes',{
@@ -162,8 +167,16 @@ class commandeNew extends React.Component{
                 <div>
                         <div className="bg-white p-3 text-center d-none d-print-block">
                             <div dangerouslySetInnerHTML={{__html: this.state.settings.printhead}} />
-
-                            <table border="1" cellspacing="0" cellpadding="0" style={{ width: '100%'}}>
+                            <div className="row">
+                                <div className="col">
+                                N: {this.state.commande.id && this.state.commande.id}
+                                </div>
+                                <div className="col">
+                                    Serveur: {this.state.commande.user && this.state.commande.user.nom}
+                                    {this.state.commande.user && this.state.commande.user.prenom}
+                                </div>
+                            </div> 
+                            <table border="1" cellspacing="0" cellpadding="0">
                                 <thead>
                                     <tr>
                                         <th>Article</th>
@@ -193,6 +206,10 @@ class commandeNew extends React.Component{
                                 </tfoot>
                                 
                             </table>
+                            <p>
+                            {this.state.commande.date && this.state.commande.date.split("T")[0]} - 
+                            {this.state.commande.date && this.state.commande.date.split("T")[1]}   
+                            </p>
                             
                             <div dangerouslySetInnerHTML={{__html: this.state.settings.printfoot}} />
                                 
@@ -212,12 +229,12 @@ class commandeNew extends React.Component{
                                         
                                         <button className="btn btn-sm btn-light m-1"  key={categorie.id}
                                             onClick={this.onCategorySelect.bind(this,categorie.id)}>
-                                            <img src={'/img/foods/'+categorie.image}  style={{width: '90px'}} />
+                                            <img src={categorie.image}  style={{width: '90px'}} />
                                         </button>
                                     
                                 )}
                                 { this.state.categories.length==0 &&
-                                    <p>Aucune catégorie.</p>
+                                    <p>...</p>
                                 }
                                 
                             </div>
@@ -233,8 +250,7 @@ class commandeNew extends React.Component{
                                     <button className="btn btn-sm btn-light m-1" 
                                         key={article.id}
                                         onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
-                                        
-                                        <img src={'/img/foods/'+article.image} style={{width: '90px'}} />
+                                        <img src={article.image} style={{width: '90px'}} />
                                         <br/>
                                         {article.title} 
                                         <br/>

@@ -6,10 +6,14 @@ import Nav from '../Nav';
 class categorie extends React.Component{
     state = { 
         categories : [],
-        artcileNewData: {title:'', price: ''},
-        categorieEditData: {id:'', title:'', price: ''},
-        modalEditDisplay: ''
+        message: ''
     };
+
+     
+    componentDidMount(){
+        
+        this.categoriesRefresh();
+    }
 
     categoriesRefresh(){
         api.get('/categories')
@@ -18,19 +22,20 @@ class categorie extends React.Component{
                 this.setState({ categories }); 
         }) 
     }
-
-    componentDidMount(){
-        this.categoriesRefresh();
-    }
      
     onDelete = (id) => {
         if(!window.confirm("Etes-vous sûr de vouloir supprimer ?"))
             return false;
-
-        api.delete(`/categories/${id}`).then(res => {
-            console.log(res);
-            this.categoriesRefresh();
-        })  
+        this.setState({message: <div className="alert alert-warning">Suppression en cours..</div>});
+        api.delete(`/categories/${id}`).then(
+            res => {
+                this.setState({message: <div className="alert alert-success">Suppression effectué.</div>});
+                this.categoriesRefresh();
+            },
+            err => {
+                this.setState({message: <div className="alert alert-danger"><strong>Erreur: </strong>Suppression n'est pas effectué.</div>});
+            }
+            )  
     }
 
      
@@ -44,9 +49,10 @@ class categorie extends React.Component{
                 <div className="container">
                     <div className="card m-3">
                         <div className="card-header bg-info text-white">
-                            <h3 className="card-title">Liste des categories</h3>
+                            Catégories 
                         </div>
                         <div className="card-body">
+                        {this.state.message}
                         <table className="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -58,7 +64,7 @@ class categorie extends React.Component{
                             <tbody>
                                 { this.state.categories.map(categorie => 
                                     <tr key={categorie.id}>
-                                        <td><img src={'img/foods/'+categorie.image} style={{width: '100px'}} /></td>
+                                        <td><img src={categorie.image} style={{width: '100px'}} /></td>
                                         <td>{categorie.title}</td>
                                         <td>
                                             <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,categorie.id)}>Supprimer</a>  

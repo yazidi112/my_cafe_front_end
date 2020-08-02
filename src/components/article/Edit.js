@@ -1,35 +1,54 @@
 import React from 'react';
-import { Link, Redirect }  from 'react-router-dom'
+import {Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
+import axios from 'axios';
 
 class ArticleNew extends React.Component{
     state = { 
-        data : {id: '', title : null, price: null, category: null },
-        categories : [],
-        redirect : null
+        article     : {id: null, title : null, price: null, category: null, image: null },
+        categories  : [],
+        redirect    : null
     };
 
-     componentDidMount(){
-        const { match: { params } } = this.props;
+    constructor(props){
+        super(props);
+        const { match: { params } } = props;
         api.get('/articles/'+params.id)
             .then(res => {
-                const data = res.data;
-                this.setState({ data }); 
+                const article = res.data;
+                article.category = "/api/categories/"+article.category.id;
+                this.setState({ article }); 
         });
         api.get('/categories')
-            .then(res => {
-                console.log(res.data);
+            .then((res)=>{
                 let categories = res.data;
                 this.setState({categories});
         }) 
-     }
+    }
+
+     
+
+    onImageUpload(event) {
+        
+        if (event.target.files && event.target.files[0]) {
+             
+            const formData = new FormData()
+            formData.append("file",event.target.files[0]);
+
+            axios.post(`http://localhost:8000/upload`,formData).then(
+                res =>{
+                    let article = this.state.article;
+                    article.image = res.data.url;
+                    this.setState({article});
+                }) 
+        }
+    }
      
     onFormSubmit = (event) => {
         event.preventDefault();
-        api.put('/articles/'+this.state.data.id,this.state.data)
+        api.put('/articles/'+this.state.article.id,this.state.article)
             .then(res => {
-                console.log(res);
                 this.setState({redirect: true});
         })  
     }
@@ -44,36 +63,36 @@ class ArticleNew extends React.Component{
                    
                     <div className="card m-3">
                         <div className="card-header bg-info text-white">
-                            <h3 className="card-title">Modifier un article</h3>
+                             Modifier un article 
                         </div>
                         <div className="card-body">
                             <form onSubmit={this.onFormSubmit}>
                                 <div className="form-group">
                                     <label>Titre</label>
-                                    <input type="text" value={this.state.data.title} onChange={(event)=>{
-                                        let data = this.state.data;
-                                        data.title = event.target.value;
-                                        this.setState({data})}
+                                    <input type="text" value={this.state.article.title} onChange={(event)=>{
+                                        let article = this.state.article;
+                                        article.title = event.target.value;
+                                        this.setState({article})}
                                         } className="form-control" />
                                 </div>
                                 <div className="form-group">
                                     <label>Prix</label>
-                                    <input type="text" value={this.state.data.price} onChange={(event)=>{
-                                        let data = this.state.data;
-                                        data.title = event.target.value;
-                                        this.setState({data})}
+                                    <input type="text" value={this.state.article.price} onChange={(event)=>{
+                                        let article = this.state.article;
+                                        article.price = event.target.value;
+                                        this.setState({article})}
                                         } className="form-control" />
                                 </div>
+                                 
                                 <div className="form-group">
                                     <label>Catégorie</label>
                                     <select onChange={(event)=>{
-                                        let data = this.state.data;
-                                        data.category = "/api/categories/"+event.target.value;
-                                        this.setState({data});
-                                        console.log(event.target.value);
+                                        let article = this.state.article;
+                                        article.category = "/api/categories/"+event.target.value;
+                                        this.setState({article});
                                         }} className="form-control">
-                                        {this.state.categories.map( category => {
-                                            if(category.id == this.state.data.category.id){
+                                        {this.state.article.id && this.state.categories.map( category => {
+                                            if(category.id == this.state.article.category.id){
                                                 return <option key={category.id} 
                                                 value={category.id} selected>
                                                     {category.title}
@@ -87,6 +106,18 @@ class ArticleNew extends React.Component{
                                         })}
                                     </select>
                                 </div>
+                                <div className="form-group">
+                                <label>Image</label>
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <div className="input-group-text">
+                                            <img src={this.state.article.image} className="d-block" style={{width: "32px"}} />
+                                        </div>
+                                    </div>
+                                    <input type="text" value={this.state.article.image} readOnly className="form-control" />
+                                </div>
+                                <input type="file" className="form-control-file" onChange={this.onImageUpload.bind(this)} />
+                            </div>
                                 <button className="btn btn-primary">Modifier</button>
                             </form>
                         </div>

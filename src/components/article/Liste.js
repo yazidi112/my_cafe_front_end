@@ -6,9 +6,7 @@ import Nav from '../Nav';
 class Article extends React.Component{
     state = { 
         articles : [],
-        artcileNewData: {title:'', price: ''},
-        articleEditData: {id:'', title:'', price: ''},
-        modalEditDisplay: ''
+        message: ''
     };
 
     articlesRefresh(){
@@ -26,16 +24,17 @@ class Article extends React.Component{
     onDelete = (id) => {
         if(!window.confirm("Etes-vous sûr de vouloir supprimer ?"))
             return false;
-
-        api.delete(`/articles/${id}`).then(res => {
-            console.log(res);
-            this.articlesRefresh();
-        })  
+        this.setState({message: <div className="alert alert-warning">Suppression en cours..</div>});
+        api.delete(`/articles/${id}`).then(
+            res => {
+                this.setState({message: <div className="alert alert-success">Suppression effectué.</div>});
+                this.articlesRefresh();
+            },
+            err => {
+                this.setState({message: <div className="alert alert-danger"><strong>Erreur: </strong>Suppression n'est pas effectué.</div>});
+            })  
     }
-
-     
-
-     
+ 
 
     render(){
         return (
@@ -44,24 +43,27 @@ class Article extends React.Component{
                 <div className="container">
                     <div className="card m-3">
                         <div className="card-header bg-info text-white">
-                            <h3 className="card-title">Liste des articles</h3>
+                             Articles 
                         </div>
                         <div className="card-body">
+                        {this.state.message}
                         <table className="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Image</th>
                                     <th>Titre</th>
                                     <th>Prix</th>
+                                    <th>Catégorie</th>
                                     <th style={{width : 200}}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 { this.state.articles.map(article => 
                                     <tr key={article.id}>
-                                        <td><img src={'/img/foods/'+article.image} style={{width: '100px'}} /></td>
+                                        <td><img src={article.image} style={{width: '100px'}} /></td>
                                         <td>{article.title}</td>
                                         <td>{article.price}</td>
+                                        <td>{article.category.title}</td>
                                         <td>
                                             <a href="#"  className="btn btn-sm btn-danger  mr-3" onClick={this.onDelete.bind(this,article.id)}>Supprimer</a>  
                                             <Link className="btn btn-sm btn-success" to={`/articles/edit/${article.id}`} >Modifier</Link> 

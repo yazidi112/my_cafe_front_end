@@ -78,9 +78,9 @@ class Login extends React.Component{
                             </div>
                             <div className="form-group">
                                 <label>Mot de passe</label>
-                                <div class="input-group mb-2">
-                                    <div class="input-group-prepend">
-                                    <div class="input-group-text">{this.state.email}</div>
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                    <div className="input-group-text">{this.state.email}</div>
                                     </div>
                                     <input type="password" value={this.state.password}  className="form-control" />
                                 </div>

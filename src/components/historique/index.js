@@ -8,12 +8,12 @@ class commande extends React.Component{
         commandes       : [],
         commande        : [],
         user            : JSON.parse(localStorage.getItem('user')),
-        selecteduserid  : null
+        selecteduser  : null
     };
 
     onDateChange = (e) =>{
         let date = e.target.value.split("T")[0];
-        api.get('/commandes?user='+this.state.selecteduserid+'&date='+ date)
+        api.get('/commandes?user='+this.state.selecteduser.id+'&date='+ date)
             .then(res => {
                 const commandes = res.data;
                 this.setState({ commandes }); 
@@ -47,10 +47,13 @@ class commande extends React.Component{
                                         Utilisateurs
                                     </div>
                                     <div className="card-body">
+                                        {this.state.users.length==0 &&
+                                            <p>Chargement des utilisateurs</p>
+                                        }
                                         {this.state.users.map(u => {
                                             return <button className="btn btn-info m-1"
                                                 onClick={e => {
-                                                    this.setState({selecteduserid: u.id})
+                                                    this.setState({selecteduser: u})
                                                 }}
                                             >{u.nom} {u.prenom}</button>
                                         })}
@@ -64,8 +67,11 @@ class commande extends React.Component{
                                     </div>
                                     <div className="card-body">
                                             <div className="form-group">
-                                                <input type="date" onChange={this.onDateChange} className="form-control" />
+                                           <input type="date" onChange={this.onDateChange} className="form-control" />
                                             </div>
+                                            {this.state.selecteduser &&
+                                                <span>Utilisateur: {this.state.selecteduser.nom} {this.state.selecteduser.prenom}</span>
+                                            }
                                             <div className="table-responsive" >
                                                 <table className="table table-bordered table-striped">
                                                     <thead>
