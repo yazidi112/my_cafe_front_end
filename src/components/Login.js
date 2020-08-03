@@ -1,28 +1,28 @@
 import React from 'react';
-import {Redirect, Route} from 'react-router-dom';
+import {Redirect, Route, BrowserRouter} from 'react-router-dom';
 import api from '../apis/api';
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 
 class Login extends React.Component{
-    state = {  id: '', email : '',password: '' , message: '', logged: false, personnes: []};
+    state = {  id: '', email : '',password: '' ,nom: '', prenom: '', message: '', logged: false, personnes: []};
 
     componentDidMount() {
-        axios.get('http://127.0.0.1:8000/personnes').then(
+        api.get('../personnes').then(
             res => {
                 let personnes = res.data;
                 this.setState({personnes});
-                console.log(this.state.personnes);
             }
         );
     }
 
-    onEmailChange = ( id,email) => {
+    onEmailChange = ( id,email,nom,prenom) => {
          
-        this.setState({email : email});
-        this.setState({id    : id});
+        this.setState({email  : email});
+        this.setState({id     : id});
+        this.setState({nom    : nom});
+        this.setState({prenom : prenom});
     }
 
     onPwdChange = (input) => {
@@ -40,7 +40,7 @@ class Login extends React.Component{
                 localStorage.setItem('token', res.data.token);
                 this.setState({message: <div className="alert alert-success"> <strong>Success :</strong> Authentication effectué avec succes. redirection en cours..</div> });
                 let roles = jwt.decode(res.data.token).roles;
-                let user = {id: this.state.id, email: this.state.email,roles: roles}
+                let user = {id: this.state.id, nom: this.state.nom, prenom: this.state.prenom, email: this.state.email,roles: roles}
                 localStorage.setItem('user', JSON.stringify(user));
                 this.setState({logged: true});
             }
@@ -53,7 +53,7 @@ class Login extends React.Component{
      
     render(){
         if(this.state.logged) 
-            return <Route><Redirect to="/" /></Route>
+            return <Redirect to="/commande/new" />
         return (
              <div className="container">
                 <div className="card m-3">
@@ -68,7 +68,7 @@ class Login extends React.Component{
                                     { this.state.personnes.map( p =>
                                         <button onClick={event => {
                                                 event.preventDefault();
-                                                this.onEmailChange(p.id,p.email)
+                                                this.onEmailChange(p.id,p.email,p.nom,p.prenom)
                                             }
                                         }
                                           className="btn m-2 btn-info">

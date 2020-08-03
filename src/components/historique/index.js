@@ -8,7 +8,8 @@ class commande extends React.Component{
         commandes       : [],
         commande        : [],
         user            : JSON.parse(localStorage.getItem('user')),
-        selecteduser  : null
+        selecteduser    : null,
+        credit          : 0
     };
 
     onDateChange = (e) =>{
@@ -34,6 +35,23 @@ class commande extends React.Component{
                 this.setState({ commande }); 
         }) 
     }
+
+    getCredit(id){
+        api.get('../commandes/no_rendu/'+id)
+        .then(res => {
+            let credit = (parseFloat(res.data.credit)).toFixed(2);
+            this.setState({credit});
+        }) 
+    }
+
+    onEncaisser(){
+        let id = this.state.selecteduser.id;
+        api.get('../commandes/rendu/'+id)
+        .then(res => {
+            console.log(res.data.message);
+            this.getCredit(id);
+        })
+    }
      
 
     render(){
@@ -53,10 +71,36 @@ class commande extends React.Component{
                                         {this.state.users.map(u => {
                                             return <button className="btn btn-info m-1"
                                                 onClick={e => {
-                                                    this.setState({selecteduser: u})
+                                                    this.setState({selecteduser: u});
+                                                    this.getCredit(u.id)
                                                 }}
                                             >{u.nom} {u.prenom}</button>
                                         })}
+                                        
+                                            <table className="table table-bordered mt-2">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Crédit</th>
+                                                        <th style={{width:'100px'}}>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                       <td>
+                                                            {this.state.credit} DH
+                                                        </td>
+                                                        <td>
+                                                        {this.state.credit != 0 && 
+                                                            <button className="btn btn-success" onClick={this.onEncaisser.bind(this)}>Encaisser</button>
+                                                        }
+                                                        {this.state.credit == 0 && 
+                                                            <button className="btn btn-success" disabled>Encaisser</button>
+                                                        }
+                                                        </td>  
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        
                                     </div>
                                 </div>
                             </div>

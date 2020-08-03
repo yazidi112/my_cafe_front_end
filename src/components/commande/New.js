@@ -11,12 +11,13 @@ class commandeNew extends React.Component{
               print             : false,
               categories        : [],
               articles          : [],
-              commande          : {id:null, lignes: [], user: null, date: null, total: 0 },
+              commande          : {id:null, lignes: [], user: null, date: null, total: 0, caisse:0 },
               user              : JSON.parse(localStorage.getItem('user')),
               settings          : {},
               messages          : {article: ''},
-              messagecommande   : '',
-              commandesaved     : false
+              message           : '',
+              saved             : false,
+              credit            : 0
             };
 
     componentDidMount(){
@@ -25,7 +26,16 @@ class commandeNew extends React.Component{
         .then(res => {
             const settings = res.data;
             this.setState({ settings }); 
-        }) 
+        });
+        this.getCredit()  ;
+    }
+
+    getCredit(){
+        api.get('../commandes/no_rendu/'+this.state.user.id)
+        .then(res => {
+            let credit = parseFloat(res.data.credit).toFixed(2);
+            this.setState({credit});
+        })
     }
 
     categoriesRefresh(){
@@ -110,18 +120,18 @@ class commandeNew extends React.Component{
     onCommandeNew = () => {
         let commande   = { lignes: [], total: 0 };
         this.setState({commande});
-        this.setState({messagecommande: ''});
-        this.setState({commandesaved: false});
+        this.setState({message: ''});
+        this.setState({saved: false});
     }
 
     onCommandePost = (event) => {
         event.preventDefault();
         //  ajout une commande
-        if(this.state.commandesaved)
+        if(this.state.saved)
             return false;
             
-        this.setState({messagecommande: <div className="alert alert-warning">Commande en cours de sauvgarde..</div>})
-        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date()}).then(
+        this.setState({message: <div className="alert alert-warning">Commande en cours de sauvgarde..</div>})
+        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date(), caisse: false}).then(
             res => {
                 if(res.data.id){
                     let commande    = this.state.commande;
@@ -135,7 +145,7 @@ class commandeNew extends React.Component{
                                 "article"   : "/api/articles/" + c.article.id,
                                 "quantite"  : c.quantite,
                                 "prix"      : parseFloat(c.prix),
-                                "commande": "/api/commandes/"+res.data.id
+                                "commande"   : "/api/commandes/"+res.data.id
                             }).then(
                                 res => {
                                     console.log(res.data);
@@ -145,8 +155,10 @@ class commandeNew extends React.Component{
                                 }
                             )
                     })
-                    this.setState({messagecommande: <div className="alert alert-success">Commande Sauvgardé avec l'ID: {res.data.id} </div>})
-                    this.setState({commandesaved: true});
+                    this.setState({message: <div className="alert alert-success">Commande Sauvgardé avec l'ID: {res.data.id} </div>})
+                    this.setState({saved: true});
+                    let credit = (parseFloat(this.state.credit)+parseFloat(this.state.commande.total)).toFixed(2);
+                    this.setState({credit});
                     window.print();
                 }
             },
@@ -169,14 +181,14 @@ class commandeNew extends React.Component{
                             <div dangerouslySetInnerHTML={{__html: this.state.settings.printhead}} />
                             <div className="row">
                                 <div className="col">
-                                N: {this.state.commande.id && this.state.commande.id}
+                                Commande N° {this.state.commande.id && this.state.commande.id}
                                 </div>
                                 <div className="col">
                                     Serveur: {this.state.commande.user && this.state.commande.user.nom}
                                     {this.state.commande.user && this.state.commande.user.prenom}
                                 </div>
                             </div> 
-                            <table border="1" cellspacing="0" cellpadding="0">
+                            <table className="table tablebordered">
                                 <thead>
                                     <tr>
                                         <th>Article</th>
@@ -217,12 +229,14 @@ class commandeNew extends React.Component{
                         </div>
             
                 <Nav />
-                <div className="row h-100 d-print-none">
+                <div className="row h-100 d-print-none h-100">
                 
                     <div className="col-md-2">
-                        <div className="card m-3 h-100 ">
-                            
-                            <div className="card-body">
+                        <div className="card m-3">
+                            <div className="card-header">
+                                Catégories
+                            </div>
+                            <div className="card-body overflow-auto" style={{height:"400px"}}>
                                 
                                 { this.state.categories.map(categorie => 
                                     
@@ -230,6 +244,8 @@ class commandeNew extends React.Component{
                                         <button className="btn btn-sm btn-light m-1"  key={categorie.id}
                                             onClick={this.onCategorySelect.bind(this,categorie.id)}>
                                             <img src={categorie.image}  style={{width: '90px'}} />
+                                            <br/>
+                                            {categorie.title}
                                         </button>
                                     
                                 )}
@@ -243,8 +259,10 @@ class commandeNew extends React.Component{
 
                     <div className="col-md-5">
                         <div className="card m-3 ">
-                            
-                            <div className="card-body">
+                            <div className="card-header">
+                                Articles
+                            </div>
+                            <div className="card-body" style={{height:"400px"}}>
                                 {this.state.messages.article }
                                 { this.state.articles.map(article => 
                                     <button className="btn btn-sm btn-light m-1" 
@@ -264,51 +282,63 @@ class commandeNew extends React.Component{
 
                     <div className="col-md-5">
                         <div className="card m-3">
-                            
-                            <div className="card-body">
-                                <div className="table-responsive">
-                                    {this.state.messagecommande}
-                                    <table className="print table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Article</th>
-                                                <th>Prix</th>
-                                                <th>Quantité</th>
-                                                <th>Montant</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            { this.state.commande.lignes.map((commande,index) => 
-                                                
-                                                <tr key={index}>
-                                                    <td>{commande.article.intitule}</td>
-                                                    <td>{commande.prix}</td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-warning"
-                                                            onClick={this.onLigneQteUpdate.bind(this,index,-1)}>-
-                                                        </button>
-                                                        <span className="p-2">{commande.quantite}</span>
-                                                        <button className="btn btn-sm btn-warning"
-                                                            onClick={this.onLigneQteUpdate.bind(this,index,1)}>+
-                                                        </button>
-                                                    </td>
-                                                    <td>{commande.montant}</td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-danger"
-                                                        onClick={this.onArticleDelete.bind(this,index)}>X</button>
-                                                    </td>
+                            <div className="card-header">
+                                Commande
+                            </div>
+                            <div className="card-body" style={{height:"400px"}}>
+                                <div className="table-responsive mb-1">
+                                    <div className="row">
+                                        <div className="col">
+                                            <i className="fa fa-user"></i> {this.state.user.nom} {this.state.user.prenom}
+                                        </div>
+                                        <div className="col text-right">
+                                            Crédit: <strong>{this.state.credit} DH</strong>
+                                        </div>
+                                    </div>
+                                    <div className="table-responsive" style={{height:"270px"}}>
+                                        <table className="print table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Article</th>
+                                                    <th>Prix</th>
+                                                    <th>Quantité</th>
+                                                    <th>Montant</th>
+                                                    <th></th>
                                                 </tr>
-                                            )}
-                                        </tbody>
-                                        <tfoot  > 
-                                            <tr>
-                                                <th>TOTAL</th>
-                                                <th colSpan="4" className="text-right">{this.state.commande.total}</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>   
+                                            </thead>
+                                            <tbody >
+                                                { this.state.commande.lignes.map((commande,index) => 
+                                                    
+                                                    <tr key={index}>
+                                                        <td>{commande.article.intitule}</td>
+                                                        <td>{commande.prix}</td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-warning"
+                                                                onClick={this.onLigneQteUpdate.bind(this,index,-1)}>-
+                                                            </button>
+                                                            <span className="p-2">{commande.quantite}</span>
+                                                            <button className="btn btn-sm btn-warning"
+                                                                onClick={this.onLigneQteUpdate.bind(this,index,1)}>+
+                                                            </button>
+                                                        </td>
+                                                        <td>{commande.montant}</td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-danger"
+                                                            onClick={this.onArticleDelete.bind(this,index)}>X</button>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                            <tfoot  > 
+                                                <tr>
+                                                    <th>TOTAL</th>
+                                                    <th colSpan="4" className="text-right">{parseFloat(this.state.commande.total).toFixed(2)} DH</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>  
+                                {this.state.message} 
                             </div>
                             <div className="card-footer bg-success text-white text-right">
                                 <button className="btn btn-light m-1" 

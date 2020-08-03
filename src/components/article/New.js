@@ -19,8 +19,7 @@ class ArticleNew extends React.Component{
         if (event.target.files && event.target.files[0]) {
              
             const formData = new FormData()
-            formData.append("file",event.target.files[0]);
-
+            formData.append("file",event.target.files[0]);            
             axios.post(`http://localhost:8000/upload`,formData).then(
                 res =>{
                     let article = this.state.article;
