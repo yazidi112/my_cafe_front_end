@@ -11,7 +11,7 @@ class commandeNew extends React.Component{
               print             : false,
               categories        : [],
               articles          : [],
-              commande          : {id:null, lignes: [], user: null, date: null, total: 0, caisse:0 },
+              commande          : {id:null, lignes: [], user: null, date: null, total: 0, caisse:false, annulee: false },
               user              : JSON.parse(localStorage.getItem('user')),
               settings          : {},
               messages          : {article: ''},
@@ -131,7 +131,7 @@ class commandeNew extends React.Component{
             return false;
             
         this.setState({message: <div className="alert alert-warning">Commande en cours de sauvgarde..</div>})
-        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date(), caisse: false}).then(
+        api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date(), caisse: false, annulee: false}).then(
             res => {
                 if(res.data.id){
                     let commande    = this.state.commande;
@@ -184,8 +184,7 @@ class commandeNew extends React.Component{
                                 Commande N° {this.state.commande.id && this.state.commande.id}
                                 </div>
                                 <div className="col">
-                                    Serveur: {this.state.commande.user && this.state.commande.user.nom}
-                                    {this.state.commande.user && this.state.commande.user.prenom}
+                                    Serveur: {this.state.user && this.state.user.nom} {this.state.user && this.state.user.prenom}
                                 </div>
                             </div> 
                             <table className="table tablebordered">
@@ -286,6 +285,7 @@ class commandeNew extends React.Component{
                                 Commande
                             </div>
                             <div className="card-body" style={{height:"400px"}}>
+                                {this.state.message} 
                                 <div className="table-responsive mb-1">
                                     <div className="row">
                                         <div className="col">
@@ -338,7 +338,7 @@ class commandeNew extends React.Component{
                                         </table>
                                     </div>
                                 </div>  
-                                {this.state.message} 
+                               
                             </div>
                             <div className="card-footer bg-success text-white text-right">
                                 <button className="btn btn-light m-1" 

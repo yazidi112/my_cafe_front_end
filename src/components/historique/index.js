@@ -6,19 +6,33 @@ class commande extends React.Component{
     state = { 
         users           : [],
         commandes       : [],
+        commandesMessage: '',
         commande        : [],
+        commandeMessage : '',
         user            : JSON.parse(localStorage.getItem('user')),
         selecteduser    : null,
-        credit          : 0
+        credit          : 0,
+        creditMessage   : '',
+        date            : '',
     };
 
-    onDateChange = (e) =>{
-        let date = e.target.value.split("T")[0];
+    onDateChange(date){
+        if(this.state.selecteduser===null){
+            this.setState({commandesMessage: <div className="alert alert-danger">Vuillez choisir un utilisateur!</div>});; 
+            return false;
+        }
+        this.setState({commandesMessage: <div className="alert alert-warning">Chargement en cours..</div>});
         api.get('/commandes?user='+this.state.selecteduser.id+'&date='+ date)
-            .then(res => {
+            .then(
+                res => {
                 const commandes = res.data;
-                this.setState({ commandes }); 
-        }) 
+                this.setState({ commandes })
+                this.setState({commandesMessage: <div className="alert alert-success">Commandes chargées.</div>});; 
+            },
+            err =>{
+                this.setState({commandesMessage: <div className="alert alert-danger"><strong>Erreur:</strong> Une erreur est survenue veuillez ressayer plus tard.</div>});; 
+            }
+        ) 
     }
 
     componentDidMount(){
@@ -29,12 +43,32 @@ class commande extends React.Component{
     }
      
     onCommandeSelect(id){
+        this.setState({commandeMessage: <div className="alert alert-warning">Chargement en cours..</div>});
         api.get('/lignecommandes?commande='+id)
             .then(res => {
+                this.setState({commandeMessage: <div className="alert alert-success">Détails de la commande chargées.</div>});
                 const commande = res.data;
                 this.setState({ commande }); 
-        }) 
+            },
+            err =>{
+                this.setState({commandeMessage: <div className="alert alert-danger"><strong>Erreur: </strong> Une erreur est survenue! Veuillez ressayer plus tard.</div>});; 
+            }) 
     }
+
+    onCommandeAnnuler(id,etat){
+
+        this.setState({commandesMessage: <div className="alert alert-warning">Oppération en cours..</div>});
+        api.put('/commandes/'+id,{annulee: etat}).then(
+            res => {
+                this.setState({commandesMessage: <div className="alert alert-success">Oppération effectué.</div>});
+                this.onDateChange(this.state.date);
+            },
+            err =>{
+                this.setState({commandesMessage: <div className="alert alert-danger"><strong>Erreur: </strong> Une erreur est survenue! Veuillez ressayer plus tard.</div>});; 
+            }
+        )
+    }
+
 
     getCredit(id){
         api.get('../commandes/no_rendu/'+id)
@@ -45,11 +79,16 @@ class commande extends React.Component{
     }
 
     onEncaisser(){
+        this.setState({creditMessage: <div className="alert alert-warning">Encaissement en cours..</div>});
         let id = this.state.selecteduser.id;
         api.get('../commandes/rendu/'+id)
         .then(res => {
+            this.setState({creditMessage: <div className="alert alert-success">Encaissement effectuée.</div>});
             console.log(res.data.message);
             this.getCredit(id);
+        },
+        err =>{
+            this.setState({creditMessage: <div className="alert alert-danger"><strong>Erreur: </strong> Une erreur est survenue! Veuillez ressayer plus tard.</div>});; 
         })
     }
      
@@ -59,24 +98,35 @@ class commande extends React.Component{
             <div>
                 <Nav />
                         <div className="row">
-                            <div className="col">
+                            <div className="col-md-3">
                                 <div className="card m-3">
                                     <div className="card-header bg-info text-white">
                                         Utilisateurs
                                     </div>
                                     <div className="card-body">
                                         {this.state.users.length==0 &&
-                                            <p>Chargement des utilisateurs</p>
+                                            <small>Chargement des utilisateurs</small>
                                         }
                                         {this.state.users.map(u => {
-                                            return <button className="btn btn-info m-1"
+                                            return <button className="btn btn-success m-1 w-100"
                                                 onClick={e => {
                                                     this.setState({selecteduser: u});
                                                     this.getCredit(u.id)
                                                 }}
-                                            >{u.nom} {u.prenom}</button>
+                                            ><i className="fa fa-user"></i> {u.nom} {u.prenom}</button>
                                         })}
                                         
+                                           
+                                        
+                                    </div>
+                                </div>
+                                <div className="card m-3">
+                                    <div className="card-header bg-info text-white">
+                                        Crédit
+                                    </div>
+                                    <div className="card-body">
+                                            {this.state.creditMessage}
+                                            <div className="table-responsive" >
                                             <table className="table table-bordered mt-2">
                                                 <thead>
                                                     <tr>
@@ -91,48 +141,71 @@ class commande extends React.Component{
                                                         </td>
                                                         <td>
                                                         {this.state.credit != 0 && 
-                                                            <button className="btn btn-success" onClick={this.onEncaisser.bind(this)}>Encaisser</button>
+                                                            <button className="btn btn-sm btn-success" onClick={this.onEncaisser.bind(this)}>Encaisser</button>
                                                         }
                                                         {this.state.credit == 0 && 
-                                                            <button className="btn btn-success" disabled>Encaisser</button>
+                                                            <button className="btn btn-sm btn-success" disabled>Encaisser</button>
                                                         }
                                                         </td>  
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="col">
+                            <div className="col-md-5">
                                 <div className="card m-3">
                                     <div className="card-header bg-info text-white">
                                         Commandes
                                     </div>
                                     <div className="card-body">
+                                            {this.state.commandesMessage}
                                             <div className="form-group">
-                                           <input type="date" onChange={this.onDateChange} className="form-control" />
+                                                {this.state.date=='' && this.state.selecteduser && <small className="text-warning">Veuillez choisir une date</small>}
+                                            <input type="date" value={this.state.date} onChange={ e =>{
+                                                let date = e.target.value.split("T")[0];
+                                                this.setState({date});
+                                                this.onDateChange(date);
+                                               }} className="form-control" />
                                             </div>
                                             {this.state.selecteduser &&
-                                                <span>Utilisateur: {this.state.selecteduser.nom} {this.state.selecteduser.prenom}</span>
+                                                <div className="small">
+                                                    <span>Utilisateur:</span> 
+                                                    <span className="float-right"><strong>{this.state.selecteduser.nom} {this.state.selecteduser.prenom}</strong></span>
+                                                </div>
                                             }
-                                            <div className="table-responsive" >
+                                                <div  className="small">
+                                                    <span>Commandes:</span> 
+                                                    <span className="float-right"><strong>{this.state.commandes.length}</strong></span>
+                                                </div>
+                                            <div className="table-responsive" style={{height:'300px'}}>
                                                 <table className="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
                                                             <th>Date de la commande</th>
-                                                            <th style={{width: '100px'}}> </th>
+                                                            <th style={{width: '170px'}}> Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         { this.state.commandes.map(commande => 
-                                                            <tr key={commande.id}>
+                                                            <tr key={commande.id} className={commande.annulee?"bg-danger text-white":""}>
                                                                 <td>{commande.id}</td>
                                                                 <td>{commande.date}</td>
                                                                 <td>
-                                                                    <button className="btn btn-warning"
-                                                                    onClick={this.onCommandeSelect.bind(this,commande.id)}>Afficher</button>
+                                                                    <button className="btn btn-warning btn-sm mr-1"
+                                                                        onClick={this.onCommandeSelect.bind(this,commande.id)}>Afficher</button>
+                                                                    {commande.annulee && 
+                                                                        <button className="btn btn-sm btn-success"
+                                                                            onClick={this.onCommandeAnnuler.bind(this,commande.id,false)}>Valider</button>
+                                                                    }
+
+                                                                    {!commande.annulee && 
+                                                                    <button className="btn btn-sm btn-danger"
+                                                                        onClick={this.onCommandeAnnuler.bind(this,commande.id,true)}>Annuler</button>
+                                                                    }
+                                                                    
                                                                 </td>
                                                             </tr>
                                                             )}
@@ -142,20 +215,20 @@ class commande extends React.Component{
                                         </div>
                                     </div>
                             </div>
-                            <div className="col">
+                            <div className="col-md-4">
                                 <div className="card m-3">
                                     <div className="card-header bg-info text-white">
                                         Détails de la commande
                                     </div>
                                     <div className="card-body">
-                                                                                                   
+                                            {this.state.commandeMessage}                                                      
                                             <div className="table-responsive">
                                                 <table className="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
                                                             <th>Article</th>
                                                             <th>Prix</th>
-                                                            <th>Quantité</th>
+                                                            <th>Qté</th>
                                                             <th>Montant</th>
                                                         </tr>
                                                     </thead>

@@ -2,7 +2,6 @@ import React from 'react';
 import { Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
-import axios from 'axios';
 
 class categoryNew extends React.Component{
     state = { redirect: null, title : null, image: null  };
@@ -14,7 +13,7 @@ class categoryNew extends React.Component{
             const formData = new FormData()
             formData.append("file",event.target.files[0]);
 
-            axios.post(`http://localhost:8000/upload`,formData).then(
+            api.post(`../upload`,formData).then(
                 res =>{
                     this.setState({image: res.data.url});
                 }) 
