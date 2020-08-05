@@ -9,7 +9,7 @@ class userNew extends React.Component{
         redirect : null
     };
 
-     componentDidMount(){
+    componentDidMount(){
         const { match: { params } } = this.props;
         console.log(this.props);
         api.get('/users/'+params.id)
