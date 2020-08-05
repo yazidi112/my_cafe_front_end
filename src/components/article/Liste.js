@@ -6,19 +6,30 @@ import Nav from '../Nav';
 class Article extends React.Component{
     state = { 
         articles : [],
-        message: ''
+        message  : '',
+        page     : 1
     };
 
     articlesRefresh(){
-        api.get('/articles')
+        api.get('/articles?page='+this.state.page)
             .then(res => {
                 const articles = res.data;
                 this.setState({ articles }); 
         }) 
     }
 
+    onChangePage = (pas) =>{
+        let page = this.state.page;
+        if(page>0){
+            page     = parseInt(page) + parseInt(pas);
+            this.setState({page});
+            this.articlesRefresh();
+        }
+        
+    }
+
     componentDidMount(){
-        this.articlesRefresh();
+        this.articlesRefresh(1);
     }
      
     onDelete = (id) => {
@@ -72,6 +83,16 @@ class Article extends React.Component{
                                     )}
                             </tbody>
                         </table>
+                        <nav aria-label="Page navigation example">
+                            <ul className="pagination justify-content-center">
+                                <li className="page-item">
+                                    <a class="page-link" href="#" onClick={this.onChangePage.bind(this,-1)}>Précedant</a>
+                                </li>
+                                <li className="page-item">
+                                <   a className="page-link" href="#"  onClick={this.onChangePage.bind(this,+1)}>Suivant</a>
+                                </li>
+                            </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>

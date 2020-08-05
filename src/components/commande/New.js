@@ -261,7 +261,7 @@ class commandeNew extends React.Component{
                             <div className="card-header">
                                 Articles
                             </div>
-                            <div className="card-body" style={{height:"400px"}}>
+                            <div className="card-body  overflow-auto" style={{height:"400px"}}>
                                 {this.state.messages.article }
                                 { this.state.articles.map(article => 
                                     <button className="btn btn-sm btn-light m-1" 
