@@ -1,11 +1,19 @@
 import React from 'react';
-import {Link ,Redirect}  from 'react-router-dom'
+import {Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
 
 class userNew extends React.Component{
     state = { redirect: null,
-              user : {nom: null, prenom: null,email: null, password: null, adresse: null, tel: null, role:["ROLE_USER"]}  
+              user : {  
+                        nom         : null,
+                        prenom      : null,
+                        email       : null, 
+                        password    : null, 
+                        adresse     : null, 
+                        tel         : null, 
+                        role        :["ROLE_USER"]
+                    }  
             };
 
     onFormSubmit = (event) => {

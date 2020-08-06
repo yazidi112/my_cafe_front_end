@@ -6,6 +6,7 @@ class commande extends React.Component{
     state = { 
         commandes   : [],
         commande    : [],
+        credit      : 0.00,
         user        : JSON.parse(localStorage.getItem('user')) 
     };
 
@@ -20,6 +21,11 @@ class commande extends React.Component{
 
     componentDidMount(){
         //this.commandesRefresh();
+            api.get('../commandes/no_rendu/'+this.state.user.id)
+            .then(res => {
+                let credit = parseFloat(res.data.credit).toFixed(2);
+                this.setState({credit});
+            })
     }
      
     onCommandeSelect(id){
@@ -36,6 +42,16 @@ class commande extends React.Component{
             <div>
                 <Nav />
                         <div className="row">
+                            <div className="col-md-3">
+                                <div className="card m-3">
+                                    <div className="card-header bg-info text-white">
+                                        Crédit
+                                    </div>
+                                    <div className="card-body">
+                                        <strong>{this.state.credit} DH</strong>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="col">
                                 <div className="card m-3">
                                     <div className="card-header bg-info text-white">

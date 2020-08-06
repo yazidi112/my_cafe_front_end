@@ -16,8 +16,7 @@ class commandeNew extends React.Component{
               settings          : {},
               messages          : {article: ''},
               message           : '',
-              saved             : false,
-              credit            : 0
+              saved             : false 
             };
 
     componentDidMount(){
@@ -27,16 +26,10 @@ class commandeNew extends React.Component{
             const settings = res.data;
             this.setState({ settings }); 
         });
-        this.getCredit()  ;
+       
     }
 
-    getCredit(){
-        api.get('../commandes/no_rendu/'+this.state.user.id)
-        .then(res => {
-            let credit = parseFloat(res.data.credit).toFixed(2);
-            this.setState({credit});
-        })
-    }
+    
 
     categoriesRefresh(){
         api.get('/categories')
@@ -212,7 +205,7 @@ class commandeNew extends React.Component{
                                 <tfoot  > 
                                     <tr>
                                         <th>TOTAL</th>
-                                        <th colSpan="4" className="text-right">{this.state.commande.total}</th>
+                                        <th colSpan="4" className="text-right"></th>
                                     </tr>
                                 </tfoot>
                                 
@@ -291,8 +284,10 @@ class commandeNew extends React.Component{
                                         <div className="col">
                                             <i className="fa fa-user"></i> {this.state.user.nom} {this.state.user.prenom}
                                         </div>
+                                         
+                                        
                                         <div className="col text-right">
-                                            Crédit: <strong>{this.state.credit} DH</strong>
+                                            TOTAL: <strong>{parseFloat(this.state.commande.total).toFixed(2)} DH</strong>
                                         </div>
                                     </div>
                                     <div className="table-responsive" style={{height:"270px"}}>
@@ -329,12 +324,7 @@ class commandeNew extends React.Component{
                                                     </tr>
                                                 )}
                                             </tbody>
-                                            <tfoot  > 
-                                                <tr>
-                                                    <th>TOTAL</th>
-                                                    <th colSpan="4" className="text-right">{parseFloat(this.state.commande.total).toFixed(2)} DH</th>
-                                                </tr>
-                                            </tfoot>
+                                             
                                         </table>
                                     </div>
                                 </div>  
