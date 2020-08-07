@@ -260,7 +260,7 @@ class commandeNew extends React.Component{
                                     <button className="btn btn-sm btn-light m-1" 
                                         key={article.id}
                                         onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
-                                        <img src={article.image} style={{width: '90px'}} />
+                                        <img src={article.image} style={{width: '80px'}} />
                                         <br/>
                                         {article.title} 
                                         <br/>
@@ -284,7 +284,6 @@ class commandeNew extends React.Component{
                                         <div className="col">
                                             <i className="fa fa-user"></i> {this.state.user.nom} {this.state.user.prenom}
                                         </div>
-                                         
                                         
                                         <div className="col text-right">
                                             TOTAL: <strong>{parseFloat(this.state.commande.total).toFixed(2)} DH</strong>
@@ -330,7 +329,7 @@ class commandeNew extends React.Component{
                                 </div>  
                                
                             </div>
-                            <div className="card-footer bg-success text-white text-right">
+                            <div className="card-footer bg-warning text-white text-right">
                                 <button className="btn btn-light m-1" 
                                     onClick={this.onCommandeNew.bind(this)}>
                                         Nouveau

@@ -16,11 +16,15 @@ class categorie extends React.Component{
     }
 
     categoriesRefresh(){
+        this.setState({message: <div className="alert alert-warning">Chargement en cours..</div>});
         api.get('/categories')
             .then(res => {
                 const categories = res.data;
                 this.setState({ categories }); 
-        }) 
+                this.setState({message: <div className="alert alert-success">Chargement terminé..</div>});
+            } ,err=>{
+                this.setState({message: <div className="alert alert-danger">Chargement echoué..</div>});
+            }) 
     }
      
     onDelete = (id) => {

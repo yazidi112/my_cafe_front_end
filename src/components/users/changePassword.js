@@ -23,10 +23,8 @@ class changePassword extends React.Component{
         api.put('/users/password/'+this.state.user.id,this.state.user)
             .then( res => {
                 this.setState({message:<div className="alert alert-success">Modification effectuée..</div> });
-                this.setState({redirect: true});
             }, err => {
                 this.setState({message:<div className="alert alert-danger"><strong>Erreur: </strong>Modification erronnée..</div> });
-                this.setState({redirect: true});
             })  
     }
 

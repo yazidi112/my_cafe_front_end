@@ -103,8 +103,8 @@ class commande extends React.Component{
                                     <div className="card-header bg-info text-white">
                                         Utilisateurs
                                     </div>
-                                    <div className="card-body">
-                                        {this.state.users.length==0 &&
+                                    <div className="card-body overflow-auto" style={{height:"290px"}}>
+                                        {this.state.users.length===0 &&
                                             <small>Chargement des utilisateurs</small>
                                         }
                                         {this.state.users.map(u => {
@@ -122,7 +122,7 @@ class commande extends React.Component{
                                 </div>
                                 <div className="card m-3">
                                     <div className="card-header bg-info text-white">
-                                        Crédit
+                                        Solde
                                     </div>
                                     <div className="card-body">
                                             {this.state.creditMessage}
@@ -130,7 +130,7 @@ class commande extends React.Component{
                                             <table className="table table-bordered mt-2">
                                                 <thead>
                                                     <tr>
-                                                        <th>Crédit</th>
+                                                        <th>Montant</th>
                                                         <th style={{width:'100px'}}>Action</th>
                                                     </tr>
                                                 </thead>
@@ -140,10 +140,10 @@ class commande extends React.Component{
                                                             {this.state.credit} DH
                                                         </td>
                                                         <td>
-                                                        {this.state.credit != 0 && 
+                                                        {this.state.credit !== 0 && 
                                                             <button className="btn btn-sm btn-success" onClick={this.onEncaisser.bind(this)}>Encaisser</button>
                                                         }
-                                                        {this.state.credit == 0 && 
+                                                        {this.state.credit === 0 && 
                                                             <button className="btn btn-sm btn-success" disabled>Encaisser</button>
                                                         }
                                                         </td>  
@@ -176,7 +176,7 @@ class commande extends React.Component{
                                                 </div>
                                             }
                                                 <div  className="small">
-                                                    <span>Commandes:</span> 
+                                                    <span>Nombre de Commandes:</span> 
                                                     <span className="float-right"><strong>{this.state.commandes.length}</strong></span>
                                                 </div>
                                             <div className="table-responsive" style={{height:'300px'}}>
@@ -222,7 +222,7 @@ class commande extends React.Component{
                                     </div>
                                     <div className="card-body">
                                             {this.state.commandeMessage}                                                      
-                                            <div className="table-responsive">
+                                            <div className="table-responsive" style={{height:'350px'}}>
                                                 <table className="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
@@ -247,16 +247,17 @@ class commande extends React.Component{
                                                             </tr>
                                                         )}
                                                     </tbody>
-                                                    <tfoot  > 
-                                                        <tr>
-                                                            <th>TOTAL</th>
-                                                            <th colSpan="4" className="text-right">
-                                                                {(this.state.commande.reduce((a, b) => parseFloat(a) + parseFloat(b.prix*b.quantite), 0)).toFixed(2)}
-                                                            </th>
-                                                        </tr>
-                                                    </tfoot>
+                                                    
                                                 </table>
-                                            </div> 
+                                            </div>
+                                            <table className="table table-bordered"> 
+                                                <tr>
+                                                    <th>TOTAL</th>
+                                                    <th colSpan="4" className="text-right">
+                                                        {(this.state.commande.reduce((a, b) => parseFloat(a) + parseFloat(b.prix*b.quantite), 0)).toFixed(2)}
+                                                    </th>
+                                                </tr>
+                                            </table> 
                                         </div>
                                     </div>
                                 </div>       

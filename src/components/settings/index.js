@@ -5,16 +5,20 @@ import Nav from '../Nav';
 
 class Settings extends React.Component{
     state = { 
-        settings : {printhead:null, printfoot:null} 
+        settings : {printhead:null, printfoot:null} ,
+        message  : ''
     };
 
      componentDidMount(){
+        this.setState({message: <div className="alert alert-warning">Chargement en cours..</div>});
         api.get('/settings/'+1)
             .then(res => {
                 const settings = res.data;
                 this.setState({ settings }); 
-                console.log(settings);
-        }) 
+                this.setState({message: <div className="alert alert-success">Chargement terminé.</div>});
+            }, err => {
+                this.setState({message: <div className="alert alert-danger">Chargement echoué.</div>});
+            }) 
      }
      
     onFormSubmit = (event) => {
@@ -37,6 +41,7 @@ class Settings extends React.Component{
                             <h3 className="card-title">Paramétres</h3>
                         </div>
                         <div className="card-body">
+                            {this.state.message}
                             <form onSubmit={this.onFormSubmit}>
                                 <h3>Ticket d'impression</h3>
                                 

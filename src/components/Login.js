@@ -1,5 +1,5 @@
 import React from 'react';
-import {Redirect, Route, BrowserRouter} from 'react-router-dom';
+import {Redirect } from 'react-router-dom';
 import api from '../apis/api';
 import jwt from 'jsonwebtoken';
 import Keyboard from 'react-simple-keyboard';
@@ -64,7 +64,7 @@ class Login extends React.Component{
                         <form onSubmit={this.onLogin}>
                             {this.state.message} 
                             <div className="form-group">
-                                    { this.state.personnes.length==0 && <small>Chargement des utilisateurs en cours..</small>}
+                                    { this.state.personnes.length===0 && <small>Chargement des utilisateurs en cours..</small>}
                                     { this.state.personnes.map( p =>
                                         <button onClick={event => {
                                                 event.preventDefault();

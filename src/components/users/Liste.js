@@ -10,11 +10,15 @@ class user extends React.Component{
     };
 
     usersRefresh(){
+        this.setState({message: <div className="alert alert-warning">Chargement en cours..</div>});
         api.get('/users')
             .then(res => {
                 const users = res.data;
                 this.setState({ users }); 
-        }) 
+                this.setState({message: <div className="alert alert-success">Chargement terminé..</div>});
+            },err=>{
+                this.setState({message: <div className="alert alert-danger">Chargement echoué..</div>});
+            }) 
     }
 
     componentDidMount(){
