@@ -3,14 +3,16 @@ import {Redirect}  from 'react-router-dom'
 import api from '../../apis/api';
 import Nav from '../Nav';
 import date from '../helpers/date';
-
+import Print from '../commande/print';
 
 class commandeNew extends React.Component{
     state = { 
               redirect          : null,
               print             : false,
               categories        : [],
+              messageCategories : '',
               articles          : [],
+              articlesByCategory: [],
               commande          : {id:null, lignes: [], user: null, date: null, total: 0, caisse:false, annulee: false },
               user              : JSON.parse(localStorage.getItem('user')),
               settings          : {},
@@ -21,57 +23,46 @@ class commandeNew extends React.Component{
 
     componentDidMount(){
         this.categoriesRefresh();
+        this.articlesResfresh();
+        this.settings();
+    }
+
+    settings(){
         api.get('/settings/'+1)
         .then(res => {
             const settings = res.data;
             this.setState({ settings }); 
         });
-       
     }
 
-    
-
     categoriesRefresh(){
+        this.setState({messageCategories : <div className="alert alert-warning"><small>Chargement cours..</small></div>});
         api.get('/categories')
             .then(res => {
                 const categories = res.data;
-                this.setState({ categories }); 
+                this.setState({ categories });
+                this.setState({messageCategories : ''});                 
+        }, err=>{
+            this.setState({messageCategories : <div className="alert alert-danger"><small>Erreur lors de chargement.</small></div>});
         })
-        api.get('/articles?category=1')
-            .then(res => {
-                const articles = res.data;
-                this.setState({ articles }); 
-        })  
+         
     }
  
-
+    articlesResfresh(){
+        api.get('/articles')
+            .then(res => {
+                const articles = res.data;
+                this.setState({ articles });
+                this.onCategorySelect(1);
+        }) 
+    }
     
 
     onCategorySelect = (id) => {
-        let message = "Chargement en cours..";
-        let messages = this.state.messages;
-        messages.article = message;
-        this.setState({messages});
-        let articles = this.state.articles;
-        articles = [];
-        this.setState({articles});
-        api.get('/articles?category='+id)
-            .then(res => {
-                const articles = res.data;
-                if(articles.length==0){
-                    let message = "Aucun article";
-                    let messages = this.state.messages;
-                    messages.article = message;
-                    this.setState({messages}); 
-                }else{
-                    this.setState({ articles });
-                    let message = "";
-                    let messages = this.state.messages;
-                    messages.article = message;
-                    this.setState({messages}); 
-                }
-                
-        }) 
+        let articlesByCategory = this.state.articles.filter(function(article){
+            return article.category.id == id
+        });
+        this.setState({articlesByCategory});
     }
      
 
@@ -119,7 +110,7 @@ class commandeNew extends React.Component{
 
     onCommandePost = (event) => {
         event.preventDefault();
-        //  ajout une commande
+        
         if(this.state.saved)
             return false;
             
@@ -133,7 +124,7 @@ class commandeNew extends React.Component{
                     commande.date   = res.data.date;
                     this.setState({commande});
                     this.state.commande.lignes.map((c) => {
-                        //  ajout une ligne de commande
+                        
                         return api.post('/lignecommandes',{
                                 "article"   : "/api/articles/" + c.article.id,
                                 "quantite"  : c.quantite,
@@ -153,6 +144,7 @@ class commandeNew extends React.Component{
                     let credit = (parseFloat(this.state.credit)+parseFloat(this.state.commande.total)).toFixed(2);
                     this.setState({credit});
                     window.print();
+                    this.onCommandeNew();
                 }
             },
             err => {
@@ -170,93 +162,31 @@ class commandeNew extends React.Component{
          
             return (
                 <div>
-                        <div className="bg-white p-3 text-center d-none d-print-block">
-                            <div dangerouslySetInnerHTML={{__html: this.state.settings.printhead}} />
-                            <div className="row">
-                                <div className="col">
-                                Commande N° {this.state.commande.id && this.state.commande.id}
-                                </div>
-                                <div className="col">
-                                    Serveur: {this.state.user && this.state.user.nom} {this.state.user && this.state.user.prenom}
-                                </div>
-                            </div> 
-                            <table className="table tablebordered">
-                                <thead>
-                                    <tr>
-                                        <th>Article</th>
-                                        <th>Prix</th>
-                                        <th>Quantité</th>
-                                        <th>Montant</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    { this.state.commande.lignes.map((commande,index) => 
-                                        
-                                        <tr key={index}>
-                                            <td>{commande.article.intitule}</td>
-                                            <td>{commande.prix}</td>
-                                            <td>
-                                                <span className="p-2">{commande.quantite}</span>
-                                            </td>
-                                            <td>{commande.montant}</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                                <tfoot  > 
-                                    <tr>
-                                        <th>TOTAL</th>
-                                        <th colSpan="4" className="text-right"></th>
-                                    </tr>
-                                </tfoot>
-                                
-                            </table>
-                            <p>
-                            {this.state.commande.date && this.state.commande.date.split("T")[0]} - 
-                            {this.state.commande.date && this.state.commande.date.split("T")[1]}   
-                            </p>
-                            
-                            <div dangerouslySetInnerHTML={{__html: this.state.settings.printfoot}} />
-                                
-                            
-                        </div>
-            
+                <Print commande={this.state.commande}  settings={this.state.settings} user={this.state.user}  />
                 <Nav />
-                <div className="row h-100 d-print-none h-100">
+                <div className="row d-print-none" style={{height:"600px"}}>
                 
-                    <div className="col-md-2">
-                        <div className="card m-3">
-                            <div className="card-header">
-                                Catégories
-                            </div>
-                            <div className="card-body overflow-auto" style={{height:"400px"}}>
+                    <div className="col-md-2 border-right overflow-auto h-100 p-1">
+                        
                                 
                                 { this.state.categories.map(categorie => 
-                                    
-                                        
-                                        <button className="btn btn-sm btn-light m-1"  key={categorie.id}
+
+                                        <button className="btn btn-sm btn-light m-1 d-block text-left w-100"  key={categorie.id}
                                             onClick={this.onCategorySelect.bind(this,categorie.id)}>
-                                            <img src={categorie.image}  style={{width: '90px'}} />
-                                            <br/>
-                                            {categorie.title}
+                                            <img src={categorie.image} className="mr-2" style={{height: '50px'}} />
+                                            <strong>{categorie.title}</strong>
                                         </button>
                                     
                                 )}
-                                { this.state.categories.length==0 &&
-                                    <p>...</p>
-                                }
+                                { this.state.messageCategories }
                                 
-                            </div>
-                        </div>
+                           
                     </div>
 
-                    <div className="col-md-5">
-                        <div className="card m-3 ">
-                            <div className="card-header">
-                                Articles
-                            </div>
-                            <div className="card-body  overflow-auto" style={{height:"400px"}}>
+                    <div className="col-md-5 border-right overflow-auto h-100">
+                        
                                 {this.state.messages.article }
-                                { this.state.articles.map(article => 
+                                { this.state.articlesByCategory.map(article => 
                                     <button className="btn btn-sm btn-light m-1" 
                                         key={article.id}
                                         onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
@@ -268,29 +198,29 @@ class commandeNew extends React.Component{
                                     </button>
                                 )}   
                                                               
-                            </div>
-                        </div>
+                          
                     </div>
 
-                    <div className="col-md-5">
-                        <div className="card m-3">
-                            <div className="card-header">
-                                Commande
-                            </div>
-                            <div className="card-body" style={{height:"400px"}}>
+                    <div className="col-md-5 h-100 p-1">
                                 {this.state.message} 
-                                <div className="table-responsive mb-1">
-                                    <div className="row">
+                                <div className="table-responsive">
+                                    <div className="row p-2">
                                         <div className="col">
                                             <i className="fa fa-user"></i> {this.state.user.nom} {this.state.user.prenom}
                                         </div>
                                         
-                                        <div className="col text-right">
+                                        <div className="col text-center big">
                                             TOTAL: <strong>{parseFloat(this.state.commande.total).toFixed(2)} DH</strong>
                                         </div>
+                                        <div className="col text-right">
+                                            <button className="btn btn-info mr-1"
+                                                onClick={this.onCommandePost.bind(this)}>
+                                                    Valider
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="table-responsive" style={{height:"270px"}}>
-                                        <table className="print table table-bordered table-striped">
+                                    <div className="table-responsive"  style={{height:"527px"}}>
+                                        <table className="print table table-bordered bg-white table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>Article</th>
@@ -300,7 +230,7 @@ class commandeNew extends React.Component{
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody >
+                                            <tbody>
                                                 { this.state.commande.lignes.map((commande,index) => 
                                                     
                                                     <tr key={index}>
@@ -326,21 +256,12 @@ class commandeNew extends React.Component{
                                              
                                         </table>
                                     </div>
-                                </div>  
+                                  
                                
                             </div>
-                            <div className="card-footer bg-warning text-white text-right">
-                                <button className="btn btn-light m-1" 
-                                    onClick={this.onCommandeNew.bind(this)}>
-                                        Nouveau
-                                </button>
-                                <button className="btn btn-light m-1"
-                                    onClick={this.onCommandePost.bind(this)}>
-                                        Valider
-                                </button>
-                            </div>
+                             
                         </div>
-                    </div>
+                   
                     
                 </div>
             </div>

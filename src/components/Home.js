@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route  }  from 'react-router-dom'
+import { Route  }  from 'react-router-dom'
 
 import ArticleListe from './article/Liste'
 import ArticleNew from './article/New'
@@ -26,7 +26,7 @@ class Home extends React.Component{
             return <Login />
         else
             return (
-                <BrowserRouter>
+               <div>
                     <Route path="/" exact component ={CommandeNew} />
                     <Route path="/commande/new" exact component ={CommandeNew} />
                     <Route path="/commandes" exact component ={CommandeListe} />
@@ -44,7 +44,7 @@ class Home extends React.Component{
                     <Route path="/users/edit/password/:id" exact component ={ChangePassword} />
                     <Route path="/login" exact component ={Login} />
                     <Route path="/logout" exact component ={Logout} />
-                </BrowserRouter>
+                </div>
             )
     }
 }
