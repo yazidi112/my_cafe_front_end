@@ -10,6 +10,7 @@ class Nav extends React.Component{
 
     componentDidMount(){
         let user = JSON.parse(localStorage.getItem('user'));        
+        //let user = {email:'yazidi', roles:['ROLE_USER']};
         this.setState({email : user.email});
         this.setState({roles : user.roles});
     }

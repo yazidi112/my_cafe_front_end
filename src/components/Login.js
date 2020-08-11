@@ -1,12 +1,12 @@
 import React from 'react';
-import {Redirect } from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import api from '../apis/api';
 import jwt from 'jsonwebtoken';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 
 class Login extends React.Component{
-    state = {  id: '', email : '',password: '' ,nom: '', prenom: '', message: '', logged: false, personnes: []};
+    state = { id: '', email : '',password: '',nom: '', prenom: '', message: '', logged: false, personnes: []};
 
     componentDidMount() {
         api.get('../personnes').then(
@@ -30,6 +30,8 @@ class Login extends React.Component{
     }
 
     onLogin = (event) => {
+        //this.setState({logged: true});
+        //return false;
         event.preventDefault();
         let message = <div className="alert alert-warning">Connexion en cours..</div>
         this.setState({ message }); 
@@ -53,7 +55,7 @@ class Login extends React.Component{
      
     render(){
         if(this.state.logged) 
-            return <Redirect to="/commande/new" />
+            return <Redirect to={'/commande/new'} />
         return (
              <div className="container">
                 <div className="card m-3">

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route  }  from 'react-router-dom'
+import { Route,Switch,BrowserRouter}  from 'react-router-dom'
 
 import ArticleListe from './article/Liste'
 import ArticleNew from './article/New'
@@ -22,28 +22,29 @@ import Logout from './Logout'
 class Home extends React.Component{
    
     render(){
-        if(!localStorage.getItem('token'))
-            return <Login />
-        else
             return (
                <div>
-                    <Route path="/" exact component ={CommandeNew} />
-                    <Route path="/commande/new" exact component ={CommandeNew} />
-                    <Route path="/commandes" exact component ={CommandeListe} />
-                    <Route path="/categories" exact component ={CategoryListe} />
-                    <Route path="/categories/new" exact component ={CategoryNew} />
-                    <Route path="/categories/edit/:id" exact component ={CategoryEdit} />
-                    <Route path="/articles" exact component ={ArticleListe} />
-                    <Route path="/articles/new" exact component ={ArticleNew} />
-                    <Route path="/articles/edit/:id" exact component ={ArticleEdit} />
-                    <Route path="/users" exact component ={UserListe} />
-                    <Route path="/users/new" exact component ={UserNew} />
-                    <Route path="/users/edit/:id" exact component ={UserEdit} />
-                    <Route path="/settings" exact component ={Settings} />
-                    <Route path="/historique" exact component ={Historique} />
-                    <Route path="/users/edit/password/:id" exact component ={ChangePassword} />
-                    <Route path="/login" exact component ={Login} />
-                    <Route path="/logout" exact component ={Logout} />
+                   <BrowserRouter>
+                        <Switch>
+                            <Route exact path="/" component ={Login} />
+                            <Route path="/commande/new"   component ={CommandeNew} />
+                            <Route path="/commandes"   component ={CommandeListe} />
+                            <Route path="/categories"   component ={CategoryListe} />
+                            <Route path="/categories/new"   component ={CategoryNew} />
+                            <Route path="/categories/edit/:id"   component ={CategoryEdit} />
+                            <Route path="/articles"  component ={ArticleListe} />
+                            <Route path="/articles/new"  component ={ArticleNew} />
+                            <Route path="/articles/edit/:id"  component ={ArticleEdit} />
+                            <Route path="/users"  component ={UserListe} />
+                            <Route path="/users/new"  component ={UserNew} />
+                            <Route path="/users/edit/:id"  component ={UserEdit} />
+                            <Route path="/settings"  component ={Settings} />
+                            <Route path="/historique"  component ={Historique} />
+                            <Route path="/users/edit/password/:id"  component ={ChangePassword} />
+                            <Route path="/login"  component ={Login} />
+                            <Route path="/logout"  component ={Logout} />
+                        </Switch>
+                    </BrowserRouter>
                 </div>
             )
     }

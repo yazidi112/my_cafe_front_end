@@ -170,13 +170,11 @@ class commandeNew extends React.Component{
                         
                                 
                                 { this.state.categories.map(categorie => 
-
-                                        <button className="btn btn-sm btn-light m-1 d-block text-left w-100"  key={categorie.id}
-                                            onClick={this.onCategorySelect.bind(this,categorie.id)}>
-                                            <img src={categorie.image} className="mr-2" style={{height: '50px'}} />
-                                            <strong>{categorie.title}</strong>
-                                        </button>
-                                    
+                                    <button className="btn btn-sm btn-light m-1 d-block text-left w-100"  key={categorie.id}
+                                        onClick={this.onCategorySelect.bind(this,categorie.id)}>
+                                        <img src={categorie.image} className="mr-2" style={{height: '50px'}} />
+                                        <strong>{categorie.title}</strong>
+                                    </button>
                                 )}
                                 { this.state.messageCategories }
                                 
@@ -206,7 +204,7 @@ class commandeNew extends React.Component{
                                 <div className="table-responsive">
                                     <div className="row p-2">
                                         <div className="col">
-                                            <i className="fa fa-user"></i> {this.state.user.nom} {this.state.user.prenom}
+                                            <i className="fa fa-user"></i>  {this.state.user.nom} {this.state.user.prenom}
                                         </div>
                                         
                                         <div className="col text-center big">
