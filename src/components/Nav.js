@@ -20,7 +20,10 @@ class Nav extends React.Component{
             return ( 
                  <div>
                     <nav className="navbar navbar-expand-lg  navbar-dark bg-dark ">
-                        <a className="navbar-brand" href="#">My <i>Café</i> 2020 <br/><small style={{fontSize: '50%'}}>By Imran YAZIDI</small></a>
+                        <a className="navbar-brand" href="#">
+                            My <strong><i>Café</i> 2020</strong> <br/>
+                            <small style={{fontSize: '50%'}}><i>By Imran YAZIDI</i></small>
+                        </a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
@@ -32,14 +35,14 @@ class Nav extends React.Component{
                                  
                                 <div className="btn-group m-1" role="group" aria-label="Basic example">
                                     <Link className="btn btn-info btn-sm pull-right  " to="/commandes" >Mes Commandes</Link>
-                                    <Link className="btn btn-secondary  btn-sm pull-right   " to="/commande/new" >+</Link>
+                                    <Link className="btn btn-light text-dark  btn-sm pull-right   " to="/commande/new" >+</Link>
                                 </div>
                                  
                                 { this.state.roles.indexOf('ROLE_ADMIN')>=0 &&
                                     <span>
                                         <Link className="btn btn-secondary pull-right m-1 btn-sm" to="/historique" >Historique</Link>
                                         <div className="btn-group m-1" role="group" aria-label="Basic example">
-                                            <Link className="btn btn-info pull-right  btn-sm" to="/categories" >Catégories</Link>
+                                            <Link className="btn btn-warning  pull-right  btn-sm" to="/categories" >Catégories</Link>
                                             <Link className="btn btn-secondary pull-right  btn-sm" to="/categories/new" >+</Link>
                                         </div>
                                         <div className="btn-group m-1" role="group" aria-label="Basic example">

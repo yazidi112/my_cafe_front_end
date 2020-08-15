@@ -30,26 +30,23 @@ class Login extends React.Component{
     }
 
     onLogin = (event) => {
-        //this.setState({logged: true});
-        //return false;
+         
         event.preventDefault();
         let message = <div className="alert alert-warning">Connexion en cours..</div>
         this.setState({ message }); 
         api.post('login_check',{"username":this.state.email,"password": this.state.password }).then(
         res => {
-            
             if(res.data.token){
                 localStorage.setItem('token', res.data.token);
                 this.setState({message: <div className="alert alert-success"> <strong>Success :</strong> Authentication effectué avec succes. redirection en cours..</div> });
-                let roles = jwt.decode(res.data.token).roles;
-                let user = {id: this.state.id, nom: this.state.nom, prenom: this.state.prenom, email: this.state.email,roles: roles}
-                localStorage.setItem('user', JSON.stringify(user));
-                this.setState({logged: true});
+                api.get('/current_user').then(res => {
+                    localStorage.setItem('user', JSON.stringify(res.data));
+                    this.setState({logged: true});
+                });                
             }
-                
         },
-            err => {
-                this.setState({message: <div className="alert alert-danger"> <strong>Erreur d'Authentification:</strong> Nom d'utilisateur ou mot de passe est incorrect.</div>});
+        err => {
+            this.setState({message: <div className="alert alert-danger"> <strong>Erreur d'Authentification:</strong> Nom d'utilisateur ou mot de passe est incorrect.</div>});
         })  
     }
      
@@ -68,7 +65,7 @@ class Login extends React.Component{
                             <div className="form-group">
                                     { this.state.personnes.length===0 && <small>Chargement des utilisateurs en cours..</small>}
                                     { this.state.personnes.map( p =>
-                                        <button onClick={event => {
+                                        <button key={p.id} onClick={event => {
                                                 event.preventDefault();
                                                 this.onEmailChange(p.id,p.email,p.nom,p.prenom)
                                             }
@@ -84,7 +81,7 @@ class Login extends React.Component{
                                     <div className="input-group-prepend">
                                     <div className="input-group-text">{this.state.email}</div>
                                     </div>
-                                    <input type="password" value={this.state.password}  className="form-control" />
+                                    <input type="password" onChange={(text)=>this.setState({password: text})} value={this.state.password}  className="form-control" />
                                 </div>
                                 <Keyboard onChange={this.onPwdChange} />
                             </div>

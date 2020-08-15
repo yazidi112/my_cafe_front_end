@@ -28,7 +28,7 @@ class commandeNew extends React.Component{
     }
 
     settings(){
-        api.get('/settings/'+1)
+        api.get('/settings/1')
         .then(res => {
             const settings = res.data;
             this.setState({ settings }); 
@@ -141,7 +141,6 @@ class commandeNew extends React.Component{
                     })
                     this.setState({message: <div className="alert alert-success">Commande Sauvgardé avec l'ID: {res.data.id} </div>})
                     this.setState({saved: true});
-                    let credit = (parseFloat(this.state.credit)+parseFloat(this.state.commande.total)).toFixed(2);
                     this.setState({credit});
                     window.print();
                     this.onCommandeNew();
