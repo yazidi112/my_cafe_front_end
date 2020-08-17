@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.js": "/my_cafe_front_end/static/js/main.94389f2e.chunk.js",
+    "main.js.map": "/my_cafe_front_end/static/js/main.94389f2e.chunk.js.map",
+    "runtime-main.js": "/my_cafe_front_end/static/js/runtime-main.c0eb4127.js",
+    "runtime-main.js.map": "/my_cafe_front_end/static/js/runtime-main.c0eb4127.js.map",
+    "static/css/2.34289635.chunk.css": "/my_cafe_front_end/static/css/2.34289635.chunk.css",
+    "static/js/2.218b03ca.chunk.js": "/my_cafe_front_end/static/js/2.218b03ca.chunk.js",
+    "static/js/2.218b03ca.chunk.js.map": "/my_cafe_front_end/static/js/2.218b03ca.chunk.js.map",
+    "index.html": "/my_cafe_front_end/index.html",
+    "precache-manifest.01b0421b38a73ced6da949c3936819cf.js": "/my_cafe_front_end/precache-manifest.01b0421b38a73ced6da949c3936819cf.js",
+    "service-worker.js": "/my_cafe_front_end/service-worker.js",
+    "static/css/2.34289635.chunk.css.map": "/my_cafe_front_end/static/css/2.34289635.chunk.css.map",
+    "static/js/2.218b03ca.chunk.js.LICENSE.txt": "/my_cafe_front_end/static/js/2.218b03ca.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c0eb4127.js",
+    "static/css/2.34289635.chunk.css",
+    "static/js/2.218b03ca.chunk.js",
+    "static/js/main.94389f2e.chunk.js"
+  ]
+}
