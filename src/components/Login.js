@@ -39,7 +39,13 @@ class Login extends React.Component{
             if(res.data.token){
                 localStorage.setItem('token', res.data.token);
                 this.setState({message: <div className="alert alert-success"> <strong>Success :</strong> Authentication effectué avec succes. redirection en cours..</div> });
-                api.get('/current_user').then(res => {
+                api.get('/current_user',{
+                    headers: {
+                        'Content-Type'  : 'application/json',
+                        'Accept'        : 'application/json',
+                        'Authorization' : `Bearer ${res.data.token}`
+                    }
+                }).then(res => {
                     localStorage.setItem('user', JSON.stringify(res.data));
                     this.setState({logged: true});
                 });                
