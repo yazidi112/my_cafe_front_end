@@ -2,6 +2,7 @@ import React from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 import api from '../../apis/api';
 import Nav from '../Nav';
+import Server from './Server'
 
 class Settings extends React.Component{
     state = { 
@@ -15,7 +16,7 @@ class Settings extends React.Component{
             .then(res => {
                 const settings = res.data;
                 this.setState({ settings }); 
-                this.setState({message: <div className="alert alert-success">Chargement terminé.</div>});
+                this.setState({message:  ''});
             }, err => {
                 this.setState({message: <div className="alert alert-danger">Chargement echoué.</div>});
             }) 
@@ -38,7 +39,7 @@ class Settings extends React.Component{
                 <div  className="container">
                     <div className="card m-3">
                         <div className="card-header bg-info text-white">
-                            <h3 className="card-title">Paramétres</h3>
+                             Paramétres d'impression 
                         </div>
                         <div className="card-body">
                             {this.state.message}
@@ -63,13 +64,15 @@ class Settings extends React.Component{
                                      
                                 </div>
                                 
-                                <button className="btn btn-primary">Enregistrer les modifications</button>
+                                <button className="btn btn-primary">Enregistrer </button>
                             </form>
                             
                         </div>
                     </div>
                 </div>
+                <Server />
             </div>
+            
           );
     }
 }

@@ -3,15 +3,15 @@ import {Redirect} from 'react-router-dom';
 
 class Logout extends React.Component{
     
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         localStorage.clear();
     }
 
      
      
     render(){
-        return <Redirect to="/login" /> 
+        return <Redirect to="/" /> 
     }
 }
  

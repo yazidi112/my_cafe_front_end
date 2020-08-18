@@ -1,5 +1,4 @@
 import React from 'react';
-import {  Link }  from 'react-router-dom'
  
 class Server extends React.Component{
     state = { 
@@ -12,6 +11,7 @@ class Server extends React.Component{
     onFormSubmit = (event) => {
         event.preventDefault();
         localStorage.setItem('server',this.state.server);
+        this.setState({message: <div className="alert alert-success">Adresse de serveur modifié.</div>})
     }
 
     render(){
@@ -22,7 +22,7 @@ class Server extends React.Component{
                 <div  className="container">
                     <div className="card m-3">
                         <div className="card-header bg-info text-white">
-                            <h3 className="card-title">Paramétres de serveur</h3>
+                            Paramétres de serveur
                         </div>
                         <div className="card-body">
                             {this.state.message}
@@ -38,7 +38,7 @@ class Server extends React.Component{
                                 
                                 <button className="btn btn-primary mr-2">Enregistrer </button>
 
-                                <Link className="btn btn-secondary " to="/" >Connexion</Link>
+                                 
                                 
                             </form>
                             
