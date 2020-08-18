@@ -57,6 +57,8 @@ class Login extends React.Component{
     }
      
     render(){
+        if(!localStorage.getItem('server')) 
+            return <Redirect to={'/server'} />
         if(this.state.logged) 
             return <Redirect to={'/commande/new'} />
         return (

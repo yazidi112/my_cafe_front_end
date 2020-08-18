@@ -17,6 +17,7 @@ import Settings from './settings'
 import Historique from './historique'
 import Login from './Login'
 import Logout from './Logout'
+import Server from './settings/Server'
  
 
 class Home extends React.Component{
@@ -27,6 +28,7 @@ class Home extends React.Component{
                    <BrowserRouter>
                         <Switch>
                             <Route exact path="/" component ={Login} />
+                            <Route exact path="/server" component ={Server} />
                             <Route path="/commande/new" exact  component ={CommandeNew} />
                             <Route path="/commandes"  exact component ={CommandeListe} />
                             <Route path="/categories"  exact component ={CategoryListe} />
@@ -41,7 +43,6 @@ class Home extends React.Component{
                             <Route path="/settings" exact component ={Settings} />
                             <Route path="/historique" exact component ={Historique} />
                             <Route path="/users/edit/password/:id" exact  component ={ChangePassword} />
-                            <Route path="/login" exact component ={Login} />
                             <Route path="/logout" exact component ={Logout} />
                         </Switch>
                     </BrowserRouter>
