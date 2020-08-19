@@ -10,24 +10,21 @@ class commande extends React.Component{
         commande        : [],
         commandeMessage : '',
         user            : JSON.parse(localStorage.getItem('user')),
-        selecteduser    : null,
+        selecteduser    : {id:''},
         credit          : 0,
         creditMessage   : '',
         date            : '',
     };
 
-    onDateChange(date){
-        if(this.state.selecteduser===null){
-            this.setState({commandesMessage: <div className="alert alert-danger">Vuillez choisir un utilisateur!</div>});; 
-            return false;
-        }
+    onDateChange(user,date){
+        
         this.setState({commandesMessage: <div className="alert alert-warning">Chargement en cours..</div>});
-        api.get('/commandes?user='+this.state.selecteduser.id+'&date='+ date)
+        api.get('/commandes?user='+user+'&date='+ date)
             .then(
                 res => {
                 const commandes = res.data;
                 this.setState({ commandes })
-                this.setState({commandesMessage: <div className="alert alert-success">Commandes chargées.</div>});; 
+                this.setState({commandesMessage: ''});; 
             },
             err =>{
                 this.setState({commandesMessage: <div className="alert alert-danger"><strong>Erreur:</strong> Une erreur est survenue veuillez ressayer plus tard.</div>});; 
@@ -46,7 +43,7 @@ class commande extends React.Component{
         this.setState({commandeMessage: <div className="alert alert-warning">Chargement en cours..</div>});
         api.get('/lignecommandes?commande='+id)
             .then(res => {
-                this.setState({commandeMessage: <div className="alert alert-success">Détails de la commande chargées.</div>});
+                this.setState({commandeMessage: ''});
                 const commande = res.data;
                 this.setState({ commande }); 
             },
@@ -100,20 +97,29 @@ class commande extends React.Component{
                         <div className="row">
                             <div className="col-md-3">
                                 <div className="card m-3">
-                                    <div className="card-header bg-info text-white">
-                                        Utilisateurs
-                                    </div>
+                                    
                                     <div className="card-body overflow-auto" style={{height:"290px"}}>
+                                        <div><label  ><input   type="radio"  name="user"  
+                                                onClick={e => {
+                                                    this.setState({selecteduser: {id:''}});
+                                                    this.setState({credit: 0.00});
+                                                    this.onDateChange('',this.state.date);
+                                                }}
+                                            />   Tous les utilisateurs</label></div>
                                         {this.state.users.length===0 &&
                                             <small>Chargement des utilisateurs</small>
                                         }
                                         {this.state.users.map(u => {
-                                            return <button className="btn btn-success m-1 w-100"
-                                                onClick={e => {
-                                                    this.setState({selecteduser: u});
-                                                    this.getCredit(u.id)
-                                                }}
-                                            ><i className="fa fa-user"></i> {u.nom} {u.prenom}</button>
+                                            return <div>
+                                                <label  > 
+                                                    <input type="radio"  name="user"  
+                                                    onClick={e => {
+                                                        this.setState({selecteduser: u});
+                                                        this.getCredit(u.id);
+                                                        this.onDateChange(u.id,this.state.date);
+                                                    }}
+                                                />   {u.nom} {u.prenom}</label>
+                                            </div>
                                         })}
                                         
                                            
@@ -121,9 +127,7 @@ class commande extends React.Component{
                                     </div>
                                 </div>
                                 <div className="card m-3">
-                                    <div className="card-header bg-info text-white">
-                                        Solde
-                                    </div>
+                                     
                                     <div className="card-body">
                                             {this.state.creditMessage}
                                             <div className="table-responsive" >
@@ -140,10 +144,10 @@ class commande extends React.Component{
                                                             {this.state.credit} DH
                                                         </td>
                                                         <td>
-                                                        {this.state.credit !== 0 && 
+                                                        {this.state.credit !== 0.00 && 
                                                             <button className="btn btn-sm btn-success" onClick={this.onEncaisser.bind(this)}>Encaisser</button>
                                                         }
-                                                        {this.state.credit === 0 && 
+                                                        {this.state.credit === 0.00 && 
                                                             <button className="btn btn-sm btn-success" disabled>Encaisser</button>
                                                         }
                                                         </td>  
@@ -156,35 +160,34 @@ class commande extends React.Component{
                             </div>
                             <div className="col-md-5">
                                 <div className="card m-3">
-                                    <div className="card-header bg-info text-white">
-                                        Commandes
-                                    </div>
+                                     
                                     <div className="card-body">
                                             {this.state.commandesMessage}
                                             <div className="form-group">
-                                                {this.state.date=='' && this.state.selecteduser && <small className="text-warning">Veuillez choisir une date</small>}
                                             <input type="date" value={this.state.date} onChange={ e =>{
                                                 let date = e.target.value.split("T")[0];
                                                 this.setState({date});
-                                                this.onDateChange(date);
+                                                this.onDateChange(this.state.selecteduser.id,date);
                                                }} className="form-control" />
                                             </div>
-                                            {this.state.selecteduser &&
-                                                <div className="small">
-                                                    <span>Utilisateur:</span> 
-                                                    <span className="float-right"><strong>{this.state.selecteduser.nom} {this.state.selecteduser.prenom}</strong></span>
-                                                </div>
-                                            }
+                                             
                                                 <div  className="small">
                                                     <span>Nombre de Commandes:</span> 
                                                     <span className="float-right"><strong>{this.state.commandes.length}</strong></span>
+                                                </div>
+                                                <div  className="small">
+                                                    <span>Total Commandes:</span> 
+                                                    <span className="float-right"><strong>
+                                                        {(this.state.commandes.reduce((a, b) => parseFloat(a) + parseFloat(b.lignecommandes.reduce((x,y)=> parseFloat(x)+parseFloat(y.prix*y.quantite),0)),0)).toFixed(2)} DH
+                                                    </strong></span>
                                                 </div>
                                             <div className="table-responsive" style={{height:'300px'}}>
                                                 <table className="table table-bordered table-striped">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
-                                                            <th>Date de la commande</th>
+                                                            <th>Date</th>
+                                                            <th>Total</th>
                                                             <th style={{width: '170px'}}> Actions</th>
                                                         </tr>
                                                     </thead>
@@ -192,7 +195,8 @@ class commande extends React.Component{
                                                         { this.state.commandes.map(commande => 
                                                             <tr key={commande.id} className={commande.annulee?"bg-danger text-white":""}>
                                                                 <td>{commande.id}</td>
-                                                                <td>{commande.date}</td>
+                                                                <td>{commande.date.split("T")[0]} </td>
+                                                                <td>{(commande.lignecommandes.reduce((a, b) => parseFloat(a) + parseFloat(b.prix*b.quantite), 0)).toFixed(2)} DH</td>
                                                                 <td>
                                                                     <button className="btn btn-warning btn-sm mr-1"
                                                                         onClick={this.onCommandeSelect.bind(this,commande.id)}>Afficher</button>
@@ -217,9 +221,7 @@ class commande extends React.Component{
                             </div>
                             <div className="col-md-4">
                                 <div className="card m-3">
-                                    <div className="card-header bg-info text-white">
-                                        Détails de la commande
-                                    </div>
+                                     
                                     <div className="card-body">
                                             {this.state.commandeMessage}                                                      
                                             <div className="table-responsive" style={{height:'350px'}}>
