@@ -8,9 +8,20 @@ class Login extends React.Component{
     state = { id: '', email : '',password: '',nom: '', prenom: '', message: '', logged: false, personnes: []};
 
     componentDidMount() {
+        if(localStorage.getItem('users')){
+            let personnes = JSON.parse(localStorage.getItem('users'));
+            this.setState({personnes});
+        }else{
+            this.users_refresh();
+        }
+
+    }
+
+    users_refresh = () =>{
         api.get('../personnes').then(
             res => {
                 let personnes = res.data;
+                localStorage.setItem('users',JSON.stringify(personnes));
                 this.setState({personnes});
             }
         );
@@ -31,28 +42,15 @@ class Login extends React.Component{
     onLogin = (event) => {
          
         event.preventDefault();
-        let message = <div className="alert alert-warning">Connexion en cours..</div>
-        this.setState({ message }); 
-        api.post('login_check',{"username":this.state.email,"password": this.state.password }).then(
-        res => {
-            if(res.data.token){
-                localStorage.setItem('token', res.data.token);
-                this.setState({message: <div className="alert alert-success"> <strong>Success :</strong> Authentication effectué avec succes. redirection en cours..</div> });
-                api.get('/current_user',{
-                    headers: {
-                        'Content-Type'  : 'application/json',
-                        'Accept'        : 'application/json',
-                        'Authorization' : `Bearer ${res.data.token}`
-                    }
-                }).then(res => {
-                    localStorage.setItem('user', JSON.stringify(res.data));
-                    this.setState({logged: true});
-                });                
-            }
-        },
-        err => {
-            this.setState({message: <div className="alert alert-danger"> <strong>Erreur d'Authentification:</strong> Nom d'utilisateur ou mot de passe est incorrect.</div>});
-        })  
+        let personnes = this.state.personnes.filter(p=>{return p.email==this.state.email && p.password==this.state.password})
+        console.log(personnes);
+        if(personnes.length){
+            localStorage.setItem('user',JSON.stringify(personnes[0]));
+            this.setState({logged:true});
+        }else{
+            this.setState({message:<div className="alert alert-danger">Erreur d'authentification</div>});
+        }
+        
     }
      
     render(){
@@ -73,17 +71,22 @@ class Login extends React.Component{
                         <form onSubmit={this.onLogin}>
                             {this.state.message} 
                             <div className="form-group">
-                                    { this.state.personnes.length===0 && <small>Chargement des utilisateurs en cours..</small>}
-                                    { this.state.personnes.map( p =>
-                                        <button key={p.id} onClick={event => {
-                                                event.preventDefault();
-                                                this.onEmailChange(p.id,p.email,p.nom,p.prenom)
-                                            }
+                                <button onClick={(event)=>{
+                                    event.preventDefault();
+                                    this.users_refresh();
+                                    }
+                                    } className="btn m-2 btn-dark" ><i className="fas fa-refresh"></i> Actualiser</button>
+                                 
+                                { this.state.personnes.map( p =>
+                                    <button key={p.id} onClick={event => {
+                                            event.preventDefault();
+                                            this.onEmailChange(p.id,p.email,p.nom,p.prenom)
                                         }
-                                          className="btn m-2 btn-info">
-                                            <i className="fas fa-user"></i> {p.nom} {p.prenom}
-                                        </button>
-                                    )}
+                                    }
+                                        className="btn m-2 btn-info">
+                                        <i className="fas fa-user"></i> {p.nom} {p.prenom}
+                                    </button>
+                                )}
                             </div>
                             <div className="form-group">
                                 <label>Mot de passe</label>

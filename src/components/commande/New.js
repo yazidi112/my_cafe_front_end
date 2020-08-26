@@ -22,16 +22,30 @@ class commandeNew extends React.Component{
             };
 
     componentDidMount(){
-        this.categoriesRefresh();
-        this.articlesResfresh();
-        this.settings();
+        if(!localStorage.getItem('categories')) 
+            this.categoriesRefresh();
+        else
+            this.setState({ categories: JSON.parse(localStorage.getItem('categories')) });
+
+        if(!localStorage.getItem('articles')) 
+            this.articlesResfresh();
+        else
+            this.setState({ articles: JSON.parse(localStorage.getItem('articles')) });
+        
+        if(!localStorage.getItem('settings')) 
+            this.settings();
+        else
+            this.setState({ settings: JSON.parse(localStorage.getItem('settings')) });
+        
+            
     }
 
     settings(){
         api.get('/settings/1')
         .then(res => {
             const settings = res.data;
-            this.setState({ settings }); 
+            this.setState({ settings });
+            localStorage.setItem('settings',JSON.stringify(settings)) ;
         });
     }
 
@@ -41,7 +55,9 @@ class commandeNew extends React.Component{
             .then(res => {
                 const categories = res.data;
                 this.setState({ categories });
-                this.setState({messageCategories : ''});                 
+                this.setState({messageCategories : ''}); 
+                localStorage.setItem('categories',JSON.stringify(categories));
+                this.onCategorySelect(1);                
         }, err=>{
             this.setState({messageCategories : <div className="alert alert-danger"><small>Erreur lors de chargement.</small></div>});
         })
@@ -53,7 +69,7 @@ class commandeNew extends React.Component{
             .then(res => {
                 const articles = res.data;
                 this.setState({ articles });
-                this.onCategorySelect(1);
+                localStorage.setItem('articles',JSON.stringify(articles));
         }) 
     }
     

@@ -91,7 +91,7 @@ class ArticleNew extends React.Component{
                                         this.setState({article});
                                         }} className="form-control">
                                         {this.state.article.id && this.state.categories.map( category => {
-                                            if(category.id == this.state.article.category.id){
+                                            if(category.id === this.state.article.category.id){
                                                 return <option key={category.id} 
                                                 value={category.id} selected>
                                                     {category.title}
