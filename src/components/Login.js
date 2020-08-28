@@ -1,11 +1,17 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 import api from '../apis/api';
-import Keyboard from 'react-simple-keyboard';
-import 'react-simple-keyboard/build/css/index.css';
+import md5 from 'md5';
+
+
 
 class Login extends React.Component{
-    state = { id: '', email : '',password: '',nom: '', prenom: '', message: '', logged: false, personnes: []};
+    state = {   id: '', email : '',password: '',nom: '', prenom: '',
+                message: '',
+                logged: false,
+                personnes: [],
+                loading: false
+    };
 
     componentDidMount() {
         if(localStorage.getItem('users')){
@@ -14,15 +20,16 @@ class Login extends React.Component{
         }else{
             this.users_refresh();
         }
-
     }
 
     users_refresh = () =>{
+        this.setState({loading:true});
         api.get('../personnes').then(
             res => {
                 let personnes = res.data;
                 localStorage.setItem('users',JSON.stringify(personnes));
                 this.setState({personnes});
+                this.setState({loading:false});
             }
         );
     }
@@ -42,15 +49,25 @@ class Login extends React.Component{
     onLogin = (event) => {
          
         event.preventDefault();
-        let personnes = this.state.personnes.filter(p=>{return p.email==this.state.email && p.password==this.state.password})
+        let personnes = this.state.personnes.filter(p=>{return p.email==this.state.email && p.password==md5(this.state.password)})
         console.log(personnes);
         if(personnes.length){
             localStorage.setItem('user',JSON.stringify(personnes[0]));
             this.setState({logged:true});
         }else{
-            this.setState({message:<div className="alert alert-danger">Erreur d'authentification</div>});
+            this.setState({message:<div className="alert alert-danger"><strong>Erreur:</strong> Email ou mot de passe incorrect !</div>});
         }
         
+    }
+
+    setPassword = (value) =>{
+        this.setState({password: this.state.password+value})
+    }
+
+    setPasswordBack = ()=>{
+        let password = this.state.password;
+        password = password.slice(0, -1);
+        this.setState({password})
     }
      
     render(){
@@ -62,8 +79,8 @@ class Login extends React.Component{
             return <Redirect to={'/commande/new'} />
         }
         return (
-             <div className="container">
-                <div className="card m-3">
+             <div className="container p-5">
+                <div className="card m-auto mt-4 w-lg-50">
                     <div className="card-header  bg-primary text-white">
                         <h3> My <i>Café</i> 2020 <small>Authentification</small></h3>
                     </div>
@@ -71,12 +88,15 @@ class Login extends React.Component{
                         <form onSubmit={this.onLogin}>
                             {this.state.message} 
                             <div className="form-group">
-                                <button onClick={(event)=>{
+                                
+                                 <button onClick={(event)=>{
                                     event.preventDefault();
+                                    this.setState({personnes: []});
                                     this.users_refresh();
                                     }
-                                    } className="btn m-2 btn-dark" ><i className="fas fa-refresh"></i> Actualiser</button>
-                                 
+                                    } className="btn   btn-dark" >
+                                    <i class={this.state.loading?"fas fa-sync fa-spin":"fas fa-sync"}></i>  
+                                </button>
                                 { this.state.personnes.map( p =>
                                     <button key={p.id} onClick={event => {
                                             event.preventDefault();
@@ -89,16 +109,28 @@ class Login extends React.Component{
                                 )}
                             </div>
                             <div className="form-group">
-                                <label>Mot de passe</label>
+                                <label>Email / Mot de passe</label>
                                 <div className="input-group mb-2">
                                     <div className="input-group-prepend">
                                     <div className="input-group-text">{this.state.email}</div>
                                     </div>
-                                    <input type="password" onChange={(text)=>this.setState({password: text})} value={this.state.password}  className="form-control" />
+                                    <input type="password" value={this.state.password}  className="form-control" />
                                 </div>
-                                <Keyboard onChange={this.onPwdChange} />
-                            </div>
-                            <button className="btn btn-primary">Connexion</button>
+                                 
+                             </div>
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(0)}}>0</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(1)}}>1</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(2)}}>2</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(3)}}>3</button>  
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(4)}}>4</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(5)}}>5</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(6)}}>6</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(7)}}>7</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(8)}}>8</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(9)}}>9</button> 
+                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPasswordBack()}}>C</button> 
+                            <button className="btn btn-dark m-1">OK</button>
+                            
                         </form>
                          
                         

@@ -18,7 +18,8 @@ class commandeNew extends React.Component{
               settings          : {},
               messages          : {article: ''},
               message           : '',
-              saved             : false 
+              saved             : false ,
+              loading           : false
             };
 
     componentDidMount(){
@@ -28,28 +29,39 @@ class commandeNew extends React.Component{
             this.setState({ categories: JSON.parse(localStorage.getItem('categories')) });
 
         if(!localStorage.getItem('articles')) 
-            this.articlesResfresh();
+            this.articlesRefresh();
         else
             this.setState({ articles: JSON.parse(localStorage.getItem('articles')) });
         
         if(!localStorage.getItem('settings')) 
-            this.settings();
+            this.settingsRefresh();
         else
             this.setState({ settings: JSON.parse(localStorage.getItem('settings')) });
         
-            
+        this.onCategorySelect(1)
     }
 
-    settings(){
+    refresh = () =>{
+        this.settingsRefresh();
+        this.categoriesRefresh();
+        this.articlesRefresh();
+    }
+
+    settingsRefresh = () =>{
+        this.setState({loading:true});
+        this.setState({settings:[]});
         api.get('/settings/1')
         .then(res => {
             const settings = res.data;
             this.setState({ settings });
             localStorage.setItem('settings',JSON.stringify(settings)) ;
+            this.setState({loading: false});
         });
     }
 
-    categoriesRefresh(){
+    categoriesRefresh = () =>{
+        this.setState({loading:true});
+        this.setState({categories:[]});
         this.setState({messageCategories : <div className="alert alert-warning"><small>Chargement cours..</small></div>});
         api.get('/categories')
             .then(res => {
@@ -57,19 +69,23 @@ class commandeNew extends React.Component{
                 this.setState({ categories });
                 this.setState({messageCategories : ''}); 
                 localStorage.setItem('categories',JSON.stringify(categories));
-                this.onCategorySelect(1);                
+                this.onCategorySelect(1);
+                this.setState({loading: false});                
         }, err=>{
             this.setState({messageCategories : <div className="alert alert-danger"><small>Erreur lors de chargement.</small></div>});
         })
          
     }
  
-    articlesResfresh(){
+    articlesRefresh = () =>{
+        this.setState({loading:true});
+        this.setState({articles:[]});
         api.get('/articles')
             .then(res => {
                 const articles = res.data;
                 this.setState({ articles });
                 localStorage.setItem('articles',JSON.stringify(articles));
+                this.setState({loading: false});
         }) 
     }
     
@@ -102,15 +118,16 @@ class commandeNew extends React.Component{
     onLigneQteUpdate(index,value){
 
         let commande = this.state.commande;
+        if(commande.lignes[index].quantite+ parseInt(value) === 0)
+            return false;
+
         commande.lignes[index].quantite = parseInt(commande.lignes[index].quantite) + parseInt(value);
         commande.lignes[index].montant  = (parseFloat(commande.lignes[index].prix) * parseFloat(commande.lignes[index].quantite)).toFixed(2);
         commande.total = (commande.lignes.reduce((a, b) => parseFloat(a) + parseFloat(b.montant), 0)).toFixed(2);
-        console.log(commande.total);
         this.setState({commande});
     }
 
     onArticleDelete = (index) => {
-        
         let commande = this.state.commande;
         commande.total = commande.total - commande.lignes[index].montant;
         commande.lignes.splice(index,1);
@@ -129,11 +146,18 @@ class commandeNew extends React.Component{
         
         if(this.state.saved)
             return false;
-            
-        this.setState({message: <div className="alert alert-warning">Commande en cours de sauvgarde..</div>})
+         
+        window.print();    
         api.post('/commandes',{user:'/api/users/' + this.state.user.id, date: date(), caisse: false, annulee: false}).then(
             res => {
                 if(res.data.id){
+                    let commandes = [];
+                    if(localStorage.getItem('commandes'))
+                        commandes = JSON.parse(localStorage.getItem('commandes'));
+                    
+                    commandes.push(res.data);
+                    localStorage.setItem('commandes',JSON.stringify(commandes));
+                    
                     let commande    = this.state.commande;
                     commande.id     =  res.data.id;
                     commande.user   = res.data.user;
@@ -157,7 +181,6 @@ class commandeNew extends React.Component{
                     })
                     this.setState({message: <div className="alert alert-success">Commande Sauvgardé avec l'ID: {res.data.id} </div>})
                     this.setState({saved: true});
-                    window.print();
                     this.onCommandeNew();
                 }
             },
@@ -171,6 +194,9 @@ class commandeNew extends React.Component{
 
 
     render(){
+        if(!localStorage.getItem('user'))
+            return <Redirect to="/" />
+            
         if(this.state.redirect)
             return <Redirect to="/categories" />
          
@@ -178,102 +204,116 @@ class commandeNew extends React.Component{
                 <div>
                 <Print commande={this.state.commande}  settings={this.state.settings} user={this.state.user}  />
                 <Nav />
+                <div class="btn-group btn-group-justified fixed-bottom   d-md-none d-sm-block">
+                    <a class="btn btn-info" href="#categories">Catégories</a>
+                    <a class="btn btn-success" href="#articles">Articles</a>
+                    <a class="btn btn-warning" href="#panier">Panier</a>
+                </div>
                 <div className="row d-print-none" style={{height:"600px"}}>
                 
-                    <div className="col-md-2 border-right overflow-auto h-100 p-1">
+                    <div id="categories" className="col-md-2 border  overflow-auto h-100 p-1">
                         
-                                
-                                { this.state.categories.map(categorie => 
-                                    <button className="btn btn-sm btn-light m-1 d-block text-left w-100"  key={categorie.id}
-                                        onClick={this.onCategorySelect.bind(this,categorie.id)}>
-                                        <img src={categorie.image} className="mr-2" style={{height: '50px'}} />
-                                        <strong>{categorie.title}</strong>
-                                    </button>
-                                )}
-                                { this.state.messageCategories }
-                                
+                        { this.state.categories.map(categorie => 
+                            <a href="#articles" className="btn btn-sm btn-light m-1 d-block text-left w-100"  key={categorie.id}
+                                onClick={this.onCategorySelect.bind(this,categorie.id)}>
+                                <img src={localStorage.getItem('server')+'/../'+categorie.image} className="mr-2" style={{height: '50px'}} />
+                                <strong>{categorie.title}</strong>
+                            </a>
+                        )}
+                        { this.state.messageCategories }        
                            
                     </div>
 
-                    <div className="col-md-5 border-right overflow-auto h-100">
+                    <div id="articles" className="col-md-5 border  overflow-auto h-100">
                         
-                                {this.state.messages.article }
-                                { this.state.articlesByCategory.map(article => 
-                                    <button className="btn btn-sm btn-light m-1" 
-                                        key={article.id}
-                                        onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
-                                        <img src={article.image} style={{width: '80px'}} />
-                                        <br/>
-                                        {article.title} 
-                                        <br/>
-                                        <strong>{article.price} DH</strong>
-                                    </button>
-                                )}   
+                        {this.state.messages.article }
+                        { this.state.articlesByCategory.map(article => 
+                            <a href="#panier" className="btn btn-sm btn-light m-1" 
+                                key={article.id}
+                                onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
+                                <img src={localStorage.getItem('server')+'/../'+article.image} style={{width: '80px'}} />
+                                <br/>
+                                {article.title} 
+                                <br/>
+                                <strong>{article.price} DH</strong>
+                            </a>
+                        )}   
                                                               
-                          
                     </div>
 
-                    <div className="col-md-5 h-100 p-1">
-                                {this.state.message} 
-                                <div className="table-responsive">
-                                    <div className="row p-2">
-                                        <div className="col">
-                                            <i className="fa fa-user"></i>  {this.state.user.nom} {this.state.user.prenom}
-                                        </div>
-                                        
-                                        <div className="col text-center big">
-                                            TOTAL: <strong>{parseFloat(this.state.commande.total).toFixed(2)} DH</strong>
-                                        </div>
-                                        <div className="col text-right">
-                                            <button className="btn btn-info mr-1"
-                                                onClick={this.onCommandePost.bind(this)}>
-                                                    Valider
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="table-responsive"  style={{height:"527px"}}>
-                                        <table className="print table table-bordered bg-white table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Article</th>
-                                                    <th>Prix</th>
-                                                    <th>Quantité</th>
-                                                    <th>Montant</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                { this.state.commande.lignes.map((commande,index) => 
-                                                    
-                                                    <tr key={index}>
-                                                        <td>{commande.article.intitule}</td>
-                                                        <td>{commande.prix}</td>
-                                                        <td>
-                                                            <button className="btn btn-sm btn-warning"
-                                                                onClick={this.onLigneQteUpdate.bind(this,index,-1)}>-
-                                                            </button>
-                                                            <span className="p-2">{commande.quantite}</span>
-                                                            <button className="btn btn-sm btn-warning"
-                                                                onClick={this.onLigneQteUpdate.bind(this,index,1)}>+
-                                                            </button>
-                                                        </td>
-                                                        <td>{commande.montant}</td>
-                                                        <td>
-                                                            <button className="btn btn-sm btn-danger"
-                                                            onClick={this.onArticleDelete.bind(this,index)}>X</button>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                             
-                                        </table>
-                                    </div>
-                                  
-                               
+                    <div id="panier" className="col-md-5 p-2 h-100 border">
+                        {this.state.message} 
+                        <div className="table-responsive">
+                            <div className="row p-2">
+                                <div className="col">
+                                    <i className="fa fa-user"></i>  {this.state.user.nom} {this.state.user.prenom}
+                                </div>
+                                
+                                <div className="col text-center big">
+                                    TOTAL: <strong>{parseFloat(this.state.commande.total).toFixed(2)} DH</strong>
+                                </div>
+                                <div className="col text-right">
+                                    <button className="btn btn-info mr-1"
+                                        onClick={this.onCommandePost.bind(this)}>
+                                            Valider
+                                    </button>
+                                    <button onClick={(event)=>{
+                                        event.preventDefault();
+                                        this.refresh();
+                                        }
+                                        } className="btn m-2 btn-dark" > 
+                                        <i class={this.state.loading?"fas fa-sync fa-spin":"fas fa-sync"}></i>
+                                    </button>
+                                </div>
                             </div>
-                             
-                        </div>
-                   
+                            <div className="table-responsive"  style={{height:"527px"}}>
+                                <table className="print table table-bordered bg-white table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Article</th>
+                                            <th>Prix</th>
+                                            <th>Quantité</th>
+                                            <th>Montant</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { this.state.commande.lignes.map((commande,index) => 
+                                            
+                                            <tr key={index}>
+                                                <td>{commande.article.intitule}</td>
+                                                <td>{commande.prix}</td>
+                                                <td>
+                                                    <table class="w-100">
+                                                        <tr>
+                                                            <td class="p-1 text-center">
+                                                                <button className="btn btn-sm btn-warning"
+                                                                    onClick={this.onLigneQteUpdate.bind(this,index,-1)}>-
+                                                                </button>
+                                                            </td>
+                                                            <td class="p-1 text-center">
+                                                                <span className="p-2 ">{commande.quantite}</span>
+                                                            </td>
+                                                            <td class="p-1 text-center">
+                                                                <button className="btn btn-sm btn-warning"
+                                                                    onClick={this.onLigneQteUpdate.bind(this,index,1)}>+
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td>{commande.montant}</td>
+                                                <td>
+                                                    <button className="btn btn-sm btn-danger"
+                                                    onClick={this.onArticleDelete.bind(this,index)}>X</button>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>      
+                                </table>
+                            </div>
+                        </div>  
+                    </div>
                     
                 </div>
             </div>

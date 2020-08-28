@@ -15,7 +15,7 @@ class user extends React.Component{
             .then(res => {
                 const users = res.data;
                 this.setState({ users }); 
-                this.setState({message: <div className="alert alert-success">Chargement terminé..</div>});
+                this.setState({message: ''});
             },err=>{
                 this.setState({message: <div className="alert alert-danger">Chargement echoué..</div>});
             }) 

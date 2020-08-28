@@ -42,7 +42,7 @@ class commande extends React.Component{
             <div>
                 <Nav />
                     <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-4 col-sm-12">
                             <div className="card m-3">
                                 <div className="card-header bg-info text-white">
                                     Crédit
@@ -52,7 +52,7 @@ class commande extends React.Component{
                                 </div>
                             </div>
                         </div>
-                        <div className="col">
+                        <div className="col-md-4 col-sm-12">
                             <div className="card m-3">
                                 <div className="card-header bg-info text-white">
                                     Commandes
@@ -87,7 +87,7 @@ class commande extends React.Component{
                                     </div>
                                 </div>
                         </div>
-                        <div className="col">
+                        <div className="col-md-4 col-sm-12">
                             <div className="card m-3">
                                 <div className="card-header bg-info text-white">
                                     Détails de la commande
@@ -100,7 +100,7 @@ class commande extends React.Component{
                                                     <tr>
                                                         <th>Article</th>
                                                         <th>Prix</th>
-                                                        <th>Quantité</th>
+                                                        <th>Qté</th>
                                                         <th>Montant</th>
                                                     </tr>
                                                 </thead>
