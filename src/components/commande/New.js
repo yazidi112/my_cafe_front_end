@@ -207,7 +207,7 @@ class commandeNew extends React.Component{
                 <div class="btn-group btn-group-justified fixed-bottom   d-md-none d-sm-block">
                     <a class="btn btn-info" href="#categories">Catégories</a>
                     <a class="btn btn-success" href="#articles">Articles</a>
-                    <a class="btn btn-warning" href="#panier">Panier</a>
+                    <a class="btn btn-warning" href="#panier">Commande</a>
                 </div>
                 <div className="row d-print-none" style={{height:"600px"}}>
                 
@@ -246,6 +246,13 @@ class commandeNew extends React.Component{
                         <div className="table-responsive">
                             <div className="row p-2">
                                 <div className="col">
+                                    <button onClick={(event)=>{
+                                        event.preventDefault();
+                                        this.refresh();
+                                        }
+                                        } className="btn m-1 btn-sm btn-dark" > 
+                                        <i class={this.state.loading?"fas fa-sync fa-spin":"fas fa-sync"}></i>
+                                    </button> 
                                     <i className="fa fa-user"></i>  {this.state.user.nom} {this.state.user.prenom}
                                 </div>
                                 
@@ -257,13 +264,7 @@ class commandeNew extends React.Component{
                                         onClick={this.onCommandePost.bind(this)}>
                                             Valider
                                     </button>
-                                    <button onClick={(event)=>{
-                                        event.preventDefault();
-                                        this.refresh();
-                                        }
-                                        } className="btn m-2 btn-dark" > 
-                                        <i class={this.state.loading?"fas fa-sync fa-spin":"fas fa-sync"}></i>
-                                    </button>
+                                    
                                 </div>
                             </div>
                             <div className="table-responsive"  style={{height:"527px"}}>

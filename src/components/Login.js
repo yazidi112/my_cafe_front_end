@@ -80,8 +80,11 @@ class Login extends React.Component{
         }
         return (
              <div className="container p-5">
+                <div className="text-center d-block m-2">
+                <img src="img/logo.png"  style={{width:100}} />
+                </div>
                 <div className="card m-auto mt-4 w-lg-50">
-                    <div className="card-header  bg-primary text-white">
+                    <div className="card-header  " style={{backgroundColor: '#794530 !important'}}>
                         <h3> My <i>Café</i> 2020 <small>Authentification</small></h3>
                     </div>
                     <div className="card-body">
@@ -118,17 +121,17 @@ class Login extends React.Component{
                                 </div>
                                  
                              </div>
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(0)}}>0</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(1)}}>1</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(2)}}>2</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(3)}}>3</button>  
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(4)}}>4</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(5)}}>5</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(6)}}>6</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(7)}}>7</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(8)}}>8</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPassword(9)}}>9</button> 
-                            <button className="btn btn-primary m-1" onClick={e=>{e.preventDefault();this.setPasswordBack()}}>C</button> 
+                            <button className="btn btn-info m-1" style={{backgroundColor: '#794530 !important'}} onClick={e=>{e.preventDefault();this.setPassword(0)}}>0</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(1)}}>1</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(2)}}>2</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(3)}}>3</button>  
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(4)}}>4</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(5)}}>5</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(6)}}>6</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(7)}}>7</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(8)}}>8</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(9)}}>9</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPasswordBack()}}>C</button> 
                             <button className="btn btn-dark m-1">OK</button>
                             
                         </form>

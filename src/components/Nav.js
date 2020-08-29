@@ -1,5 +1,6 @@
 import React from 'react'
 import {  Link }  from 'react-router-dom'
+import logo from '../logo.png'
  
 class Nav extends React.Component{
 
@@ -21,8 +22,7 @@ class Nav extends React.Component{
                  <div>
                     <nav className="navbar navbar-expand-lg  navbar-dark bg-dark ">
                         <a className="navbar-brand" href="#">
-                            My <strong><i>Café</i> 2020</strong> <br/>
-                            <small style={{fontSize: '50%'}}><i>By Imran YAZIDI</i></small>
+                            <img src={logo}  style={{width:50,filter: 'brightness(265%)'}} />
                         </a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
@@ -34,8 +34,8 @@ class Nav extends React.Component{
                             <span className="navbar-text">
                                  
                                 <div className="btn-group m-1" role="group" aria-label="Basic example">
-                                    <Link className="btn btn-info btn-sm pull-right  " to="/commandes" >Mes Commandes</Link>
-                                    <Link className="btn btn-light text-dark  btn-sm pull-right   " to="/commande/new" >+</Link>
+                                    <Link className="btn btn-light text-dark  btn-sm   " to="/commande/new" >Nouvelle commande</Link>
+                                    <Link className="btn btn-info btn-sm   " to="/commandes" >Mes Commandes</Link>
                                 </div>
                                  
                                 { this.state.roles.indexOf('ROLE_ADMIN')>=0 &&
