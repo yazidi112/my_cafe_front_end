@@ -1,9 +1,11 @@
 import React from 'react';
+import {Redirect} from 'react-router-dom';
  
 class Server extends React.Component{
     state = { 
         server      : localStorage.getItem('server') ,
-        message     : ''
+        message     : '',
+        redirect    : false
     };
 
     
@@ -11,11 +13,15 @@ class Server extends React.Component{
     onFormSubmit = (event) => {
         event.preventDefault();
         localStorage.setItem('server',this.state.server);
-        this.setState({message: <div className="alert alert-success">Adresse de serveur modifié.</div>})
+        this.setState({message: <div className="alert alert-success">Adresse de serveur modifié.</div>});
+        setTimeout(() => {
+            this.setState({redirect: true})
+        }, 1000);
     }
 
     render(){
-        
+        if(this.state.redirect)
+            return <Redirect to="/" />
         return (
             <div>
                 

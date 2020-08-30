@@ -2,6 +2,7 @@ import React from 'react';
 import {Redirect} from 'react-router-dom';
 import api from '../apis/api';
 import md5 from 'md5';
+import logo from './../logo.png'
 
 
 
@@ -81,7 +82,7 @@ class Login extends React.Component{
         return (
              <div className="container p-5">
                 <div className="text-center d-block m-2">
-                <img src="img/logo.png"  style={{width:100}} />
+                <img src={logo}  style={{width:100}} />
                 </div>
                 <div className="card m-auto mt-4 w-lg-50">
                     <div className="card-header  " style={{backgroundColor: '#794530 !important'}}>
@@ -121,7 +122,7 @@ class Login extends React.Component{
                                 </div>
                                  
                              </div>
-                            <button className="btn btn-info m-1" style={{backgroundColor: '#794530 !important'}} onClick={e=>{e.preventDefault();this.setPassword(0)}}>0</button> 
+                            
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(1)}}>1</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(2)}}>2</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(3)}}>3</button>  
@@ -131,6 +132,7 @@ class Login extends React.Component{
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(7)}}>7</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(8)}}>8</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(9)}}>9</button> 
+                            <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(0)}}>0</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPasswordBack()}}>C</button> 
                             <button className="btn btn-dark m-1">OK</button>
                             
