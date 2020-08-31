@@ -17,7 +17,7 @@ class Article extends React.Component{
             .then(res => {
                 const articles = res.data;
                 this.setState({ articles });
-                this.setState({message: <div className="alert alert-success">Chargement términé.</div>});
+                this.setState({message:  ''});
         }) 
     }
 
@@ -77,7 +77,7 @@ class Article extends React.Component{
                                 <tbody>
                                     { this.state.articles.map(article => 
                                         <tr key={article.id}>
-                                            <td><img src={article.image} style={{width: '100px'}} /></td>
+                                            <td><img src={localStorage.getItem('server')+'/../'+article.image} style={{width: '100px'}} /></td>
                                             <td>{article.title}</td>
                                             <td>{article.price}</td>
                                             <td>{article.category.title}</td>
