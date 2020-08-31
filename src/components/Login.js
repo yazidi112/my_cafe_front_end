@@ -86,7 +86,7 @@ class Login extends React.Component{
                 </div>
                 <div className="card m-auto mt-4 w-lg-50">
                     <div className="card-header  " style={{backgroundColor: '#794530 !important'}}>
-                        <h3> My <i>Café</i> 2020 <small>Authentification</small></h3>
+                        <h3 className="text-center"> My <i>Café</i> 2020 <small>Authentification</small></h3>
                     </div>
                     <div className="card-body">
                         <form onSubmit={this.onLogin}>
