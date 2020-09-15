@@ -25,12 +25,18 @@ class Login extends React.Component{
 
     users_refresh = () =>{
         this.setState({loading:true});
+        this.setState({message:''});
         api.get('../personnes').then(
             res => {
                 let personnes = res.data;
                 localStorage.setItem('users',JSON.stringify(personnes));
                 this.setState({personnes});
                 this.setState({loading:false});
+                this.setState({message:''});
+            },
+            err =>{
+                this.setState({loading:false});
+                this.setState({message:<div className="alert alert-danger"><strong>Erreur:</strong> lors de chargement  des utilisateurs, veuillez vérfier l'adresse du serveur utilisé.</div>});
             }
         );
     }
@@ -84,30 +90,33 @@ class Login extends React.Component{
                 <div className="text-center d-block m-2">
                 <img src={logo}  style={{width:100}} />
                 </div>
-                <div className="card m-auto mt-4 w-lg-50">
+                <div className="col-md-6 m-auto">
+                    <div className="card m-auto mt-4">
                     <div className="card-header  " style={{backgroundColor: '#794530 !important'}}>
-                        <h3 className="text-center"> My <i>Café</i> 2020 <small>Authentification</small></h3>
-                    </div>
-                    <div className="card-body">
-                        <form onSubmit={this.onLogin}>
-                            {this.state.message} 
-                            <div className="form-group">
-                                
-                                 <button onClick={(event)=>{
+                        <h3 className="text-center"> 
+                            
+                            <button onClick={(event)=>{
                                     event.preventDefault();
                                     this.setState({personnes: []});
                                     this.users_refresh();
                                     }
-                                    } className="btn   btn-dark" >
+                                    } className="btn btn-sm btn-dark pull-right" >
                                     <i class={this.state.loading?"fas fa-sync fa-spin":"fas fa-sync"}></i>  
-                                </button>
+                                </button> 
+                            My <i>Café</i> 2020.1 <small>Authentification</small>
+                        </h3>
+                    </div>
+                    <div className="card-body">
+                        <form onSubmit={this.onLogin}>
+                            {this.state.message} 
+                            <div className="text-center" style={{overflowY:'scroll',padding:'5',overflowX:'hidden',height:'100'}}>
                                 { this.state.personnes.map( p =>
                                     <button key={p.id} onClick={event => {
                                             event.preventDefault();
                                             this.onEmailChange(p.id,p.email,p.nom,p.prenom)
                                         }
                                     }
-                                        className="btn m-2 btn-info">
+                                        className="btn m-2 btn-info" style={{width:'90%'}}>
                                         <i className="fas fa-user"></i> {p.nom} {p.prenom}
                                     </button>
                                 )}
@@ -127,10 +136,12 @@ class Login extends React.Component{
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(2)}}>2</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(3)}}>3</button>  
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(4)}}>4</button> 
+                            <br/>
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(5)}}>5</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(6)}}>6</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(7)}}>7</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(8)}}>8</button> 
+                            <br/>
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(9)}}>9</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPassword(0)}}>0</button> 
                             <button className="btn btn-info m-1" onClick={e=>{e.preventDefault();this.setPasswordBack()}}>C</button> 
@@ -138,7 +149,7 @@ class Login extends React.Component{
                             
                         </form>
                          
-                        
+                        </div>
                     </div>
                 </div>
             </div>
