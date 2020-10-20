@@ -50,6 +50,14 @@ class Nav extends React.Component{
                                             <Link className="btn btn-secondary pull-right   btn-sm" to="/articles/new" >+</Link>
                                         </div>
                                         <div className="btn-group m-1" role="group" aria-label="Basic example">
+                                            <Link className="btn btn-warning pull-right   btn-sm" to="/stocks" >Stock</Link>
+                                            <Link className="btn btn-secondary pull-right   btn-sm" to="/stocks/new" >+</Link>
+                                        </div>
+                                        <div className="btn-group m-1" role="group" aria-label="Basic example">
+                                            <Link className="btn btn-success pull-right   btn-sm" to="/fournisseurs" >Fournisseurs</Link>
+                                            <Link className="btn btn-secondary pull-right   btn-sm" to="/fournisseurs/new" >+</Link>
+                                        </div>
+                                        <div className="btn-group m-1" role="group" aria-label="Basic example">
                                             <Link className="btn btn-success pull-right   btn-sm" to="/users" >Utilisateurs</Link>
                                             <Link className="btn btn-secondary pull-right   btn-sm" to="/users/new" >+</Link>
                                         </div>

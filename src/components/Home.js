@@ -12,6 +12,12 @@ import CommandeListe from './commande/Liste'
 import UserListe from './users/Liste'
 import UserNew from './users/New'
 import UserEdit from './users/Edit'
+import fournisseurNew from './fournisseur/New'
+import fournisseurEdit from './fournisseur/Edit'
+import fournisseur from './fournisseur/Liste'
+import stocksNew from './stock/New'
+import stocksEdit from './stock/Edit'
+import Stock from './stock/Liste'
 import ChangePassword from './users/changePassword'
 import Settings from './settings'
 import Historique from './historique'
@@ -40,6 +46,14 @@ class Home extends React.Component{
                             <Route path="/users" exact component ={UserListe} />
                             <Route path="/users/new" exact component ={UserNew} />
                             <Route path="/users/edit/:id" exact component ={UserEdit} />
+
+                            <Route path="/stocks" exact component ={Stock} />
+                            <Route path="/stocks/new" exact component ={stocksNew} />
+                            <Route path="/stocks/edit/:id" exact component ={stocksEdit} />
+
+                            <Route path="/fournisseurs" exact component ={fournisseur} />
+                            <Route path="/fournisseurs/new" exact component ={fournisseurNew} />
+                            <Route path="/fournisseurs/edit/:id" exact component ={fournisseurEdit} />
                             <Route path="/settings" exact component ={Settings} />
                             <Route path="/historique" exact component ={Historique} />
                             <Route path="/users/edit/password/:id" exact  component ={ChangePassword} />

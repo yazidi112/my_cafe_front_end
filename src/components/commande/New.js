@@ -173,6 +173,15 @@ class commandeNew extends React.Component{
                             }).then(
                                 res => {
                                     console.log(res.data);
+                                    let articles = JSON.parse(localStorage.getItem('articles'));
+                                    for(let i=0;i<articles.length;i++){
+                                        if(articles[i].id==c.article.id){
+                                            articles[i].stocks.push({qtestock:-c.quantite});
+                                            this.setState({ articles });
+                                        }
+                                    }
+                                    localStorage.setItem('articles',JSON.stringify(articles));
+                                    this.onCategorySelect(res.data.article.category.id);
                                 },
                                 err => {
                                     console.log(err)
@@ -230,15 +239,16 @@ class commandeNew extends React.Component{
                         { this.state.articlesByCategory.map(article => 
                             <a href="#panier" className="btn btn-sm btn-light m-1" 
                                 key={article.id}
-                                onClick={this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
+                                onClick={article.stocks.reduce((a, b) => parseFloat(a) + parseFloat(b.qtestock), 0)>0 && this.onArticleSelect.bind(this,article.id, article.title, article.price)}>
                                 <img src={localStorage.getItem('server')+'/../'+article.image} style={{width: '80px'}} />
                                 <br/>
                                 {article.title} 
                                 <br/>
                                 <strong>{article.price} DH</strong>
+                                <br/>
+                                <samll style={{color:'#aaa',fontSize:'11px'}}>{article.stocks.reduce((a, b) => parseFloat(a) + parseFloat(b.qtestock), 0)} en stock</samll>
                             </a>
                         )}   
-                                                              
                     </div>
 
                     <div id="panier" className="col-md-5 p-2 h-100 border">
@@ -264,7 +274,6 @@ class commandeNew extends React.Component{
                                         onClick={this.onCommandePost.bind(this)}>
                                             Valider
                                     </button>
-                                    
                                 </div>
                             </div>
                             <div className="table-responsive"  style={{height:"527px"}}>
